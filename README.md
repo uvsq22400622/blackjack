@@ -1,3 +1,3 @@
 # blackjack
 MI TD02
-Membres : 
+Membres : ADAO Laura, QUENNESSON
