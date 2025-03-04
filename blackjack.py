@@ -8,3 +8,8 @@
 #   == itérations  
 #pour le c : il tire des cartes jusqu'à atteindre au moins 17 ou plus (d'autres conditions)
 # + interface graphique, tenter les mises 
+import random as rd
+import tkinter as tk
+
+input("Le jeu démarre !")
+
