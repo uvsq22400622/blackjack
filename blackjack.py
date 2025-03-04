@@ -8,7 +8,7 @@
 #   == itérations  
 #pour le c : il tire des cartes jusqu'à atteindre au moins 17 ou plus (d'autres conditions)
 # + interface graphique, tenter les mises 
-import random as rd
+import random
 import tkinter as tk
 
 rangs={"As":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Valet":10, "Dame":10, "Roi":10}
@@ -19,11 +19,11 @@ def carte(paquet, n):
     """génère un nombre n de cartes du paquet"""
     main=[]
     for i in range (n):
-        carte=rd.choice(paquet)
+        carte=random.choice(paquet)
         main.append(carte)
     return(main)
 
-def valeur(main): # A modifier pour que ce soit le joueur qui décide si l'as vaut 1 ou 11.
+def valeur(main):
     """renvoie la valeur des cartes dans une main"""
     valeur=0
     nb_as=0
@@ -90,9 +90,8 @@ canvas.grid(row=0,column=0)
 
 bouton_demarrer= tk.Button(racine, text="Démarrer", command= )
 canvas.grid(row=1,column=0)
-bouton_tirer=tk.Button(racine,)
-bouton_rester=tk.Button(racine,)
-bouton_miser=tk.Button(racine,)
-
+bouton_tirer=tk.Button(racine, text="Tirer")
+bouton_rester=tk.Button(racine, text="Rester")
+bouton_miser=tk.Button(racine, text="Miser")
 
 racine.mainloop()
