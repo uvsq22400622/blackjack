@@ -19,3 +19,6 @@ canvas = tk.Canvas(racine, text="Le jeu démarre")
 
 cartes = {"2":2, "3":3, "4":4, "5":5, "6":6,"7":7,"8":8, "9":9, "10": 10, "Valet":10, "Dame":10, "Roi":10,
           "as" : 1 or 11}
+
+
+print("bonjour")
