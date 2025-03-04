@@ -8,18 +8,8 @@
 #   == itérations  
 #pour le c : il tire des cartes jusqu'à atteindre au moins 17 ou plus (d'autres conditions)
 # + interface graphique, tenter les mises 
-import random as rd
+import random
 import tkinter as tk
-
-racine = tk.Tk()
-racine.title("Blackjack")
-
-canvas = tk.Canvas(racine, text="Le jeu démarre")
-
-cartes = {"2":2, "3":3, "4":4, "5":5, "6":6,"7":7,"8":8, "9":9, "10": 10, "Valet":10, "Dame":10, "Roi":10,
-          "as" : 1 or 11}
-          
-import random 
 
 rangs={"As":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Valet":10, "Dame":10, "Roi":10}
 couleurs=["Coeur", "Trèfle", "Carreau", "Pique"]
@@ -92,5 +82,17 @@ def jouer():
             print("Merci d'avoir joué!")
             break
 
-=======
->>>>>>> 583a98cea8ce986b115cb649d3779cd37f354a87
+racine = tk.Tk()
+racine.title("Blackjack")
+
+canvas = tk.Canvas(racine, text="Le jeu démarre", bg="white", height=400, width=400) #voir par défaut taille fenêtre
+canvas.grid(row=0,column=0)
+
+bouton_demarrer= tk.Button(racine, text="Démarrer", command= )
+canvas.grid(row=1,column=0)
+bouton_tirer=tk.Button(racine,)
+bouton_rester=tk.Button(racine,)
+bouton_miser=tk.Button(racine,)
+
+
+racine.mainloop()
