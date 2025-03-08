@@ -63,13 +63,32 @@ def partie(jeton:int)->int:
             label_mise.destroy()
             entry_mise.destroy()
             bouton_valider.destroy()
-    
+
+        #Vérification blackjack.
+        if valeur(main_joueur)==21:
+            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
+            label_winner.pack()
+
     bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
     bouton_valider.pack()
+        
+    def tirer():
+        """Rajoute une carte au joueur"""
+        nonlocal main_joueur
+        main_joueur.extend(carte(paquet,1))
+        label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
 
+    def rester():
+        """Le joueur ne tire pas et passe son tour"""
+        label_reste = tk.Label(racine, text="Le joueur reste.")
     
-       
+    label_choix = tk.Label(racine, text="Voulez-vous tirer ou rester? ")
+    label_choix.pack()
+    bouton_tirer = tk.Button(racine, text="Tirer", command=tirer)
+    bouton_tirer.pack()
 
+    bouton_rester = tk.Button(racine, text="Rester", command=rester)
+    bouton_rester.pack()
 
 
 #Création du menu du jeu
@@ -87,7 +106,8 @@ bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width
 bouton_quitter.bind("<Button-1>", quit)
 bouton_quitter.grid(row=2,column=0)
 
-
+bouton_abandonner = tk.Button(racine, text="Surrender", font = ("helvetica", "20"), width=50)
+bouton_abandonner.bind("<Button-1>")
 
 
 rangs={"As":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Valet":10, "Dame":10, "Roi":10}
