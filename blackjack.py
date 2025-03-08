@@ -114,13 +114,27 @@ def jouer():
 racine = tk.Tk()
 racine.title("Blackjack")
 
-canvas = tk.Canvas(racine, text="Le jeu démarre", bg="white", height=400, width=400) #voir par défaut taille fenêtre
-canvas.grid(row=0,column=0)
+menu_blackjack=tk.Menu(racine) #barre de menu
 
-bouton_demarrer= tk.Button(racine, text="Démarrer", command= )
-canvas.grid(row=1,column=0)
-bouton_tirer=tk.Button(racine, text="Tirer")
-bouton_rester=tk.Button(racine, text="Rester")
-bouton_miser=tk.Button(racine, text="Miser")
+menu_démarrer=tk.Menu(menu_blackjack) 
+menu_quitter=tk.Menu(menu_blackjack)
+
+
+
+
+
+canvas = tk.Canvas(racine, bg="white", height=500, width=500)
+label_demarrage = tk.Label(racine, text="Voulez-vous jouer ?", padx=20, pady=20, font = ("helvetica", "30"))
+bouton_demarrer= tk.Button(racine, text="Démarrer", font = ("helvetica", "30"), command= lambda: affichage("C'est parti !"))
+
+bouton_demarrer.grid(row=1,column=0)
+label_demarrage.grid(row=0, column=0, columnspan=2)
+canvas.grid()
+
+
+#canvas.grid(row=1,column=0)
+#bouton_tirer=tk.Button(racine, text="Tirer", command=)
+#bouton_rester=tk.Button(racine, text="Rester")
+#bouton_miser=tk.Button(racine, text="Miser")
 
 racine.mainloop()
