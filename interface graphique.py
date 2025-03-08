@@ -44,8 +44,33 @@ def partie(jeton:int)->int:
     label_joueur.pack()
     label_croupier=tk.Label(racine,text=f"Carte visible du croupier : {main_croupier} (Valeur : {valeur(main_croupier)})")
     label_croupier.pack()
-       
+
+    # Création du champ de saisie pour la mise
+    label_mise = tk.Label(racine, text="Vous avez 100 jetons, combien voulez vous miser ? :")
+    label_mise.pack()
+    entry_mise = tk.Entry(racine)
+    entry_mise.pack()
+
+    #fonction pour la mise de base
+    def valider_mise():
+        """Valide la mise de l'utilisateur."""
+        mise_utilisateur = int(entry_mise.get())
+        if mise_utilisateur>jeton:
+            label_erreur = tk.Label(racine, text="Votre mise n'est pas valide, veuillez entrer un montant valide!")
+            label_erreur.pack()
+        else:
+            print(f"Mise acceptée : {mise_utilisateur}") #test
+            label_mise.destroy()
+            entry_mise.destroy()
+            bouton_valider.destroy()
     
+    bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
+    bouton_valider.pack()
+
+    
+       
+
+
 
 #Création du menu du jeu
 racine = tk.Tk()
