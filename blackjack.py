@@ -136,5 +136,5 @@ canvas.grid()
 #bouton_tirer=tk.Button(racine, text="Tirer", command=)
 #bouton_rester=tk.Button(racine, text="Rester")
 #bouton_miser=tk.Button(racine, text="Miser")
-
+#TEST
 racine.mainloop()
