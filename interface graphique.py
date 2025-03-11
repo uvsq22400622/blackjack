@@ -77,6 +77,8 @@ def partie(jeton:int)->int:
         nonlocal main_joueur
         main_joueur.extend(carte(paquet,1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
+        main_croupier.extend(carte(paquet,1))
+        label_croupier.config(text=f"Carte visible du croupier : {main_croupier} (Valeur : {valeur(main_croupier)})")
 
     def rester():
         """Le joueur ne tire pas et passe son tour"""
