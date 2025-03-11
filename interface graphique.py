@@ -65,9 +65,13 @@ def partie(jeton:int)->int:
             bouton_valider.destroy()
 
         #Vérification blackjack.
-        if valeur(main_joueur)==21:
+        if valeur(main_joueur)>=21:
             label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
             label_winner.pack()
+        if valeur(main_croupier)>=21:
+            print(label_winner)
+            label_looser = tk.Label(racine, text=f"Le croupier a perdu !")
+        
 
     bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
     bouton_valider.pack()
