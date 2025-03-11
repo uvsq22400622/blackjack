@@ -71,7 +71,8 @@ def partie(jeton:int)->int:
         if valeur(main_croupier)>=21:
             print(label_winner)
             label_looser = tk.Label(racine, text=f"Le croupier a perdu !")
-        
+            #à terminer
+            #le joueur ne perd pas même après avoir dépasser 21
 
     bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
     bouton_valider.pack()
@@ -96,6 +97,8 @@ def partie(jeton:int)->int:
     bouton_rester = tk.Button(racine, text="Rester", command=rester)
     bouton_rester.pack()
 
+    #rajouter le bouton abandonner, ....
+
 
 #Création du menu du jeu
 racine = tk.Tk()
@@ -103,6 +106,7 @@ racine.title("Blackjack")
 
 label_demarrage = tk.Label(racine, text="Blackjack !", padx=20, pady=20, font = ("helvetica", "30"))
 label_demarrage.grid(row=0,column=0,columnspan=2)
+#modifier la fenêtre, rajouter des images cartes, + credit
 
 bouton_demarrer= tk.Button(racine, text="Play", font = ("helvetica", "30"), width=50)
 bouton_demarrer.bind("<Button-1>",play)
