@@ -10,6 +10,7 @@
 # + interface graphique, tenter les mises 
 #règles possibles à ajouter: Abandonner, Doubler, Splitter 
 #règles:https://www.mundijeux.fr/multijoueur/blackjack/regles/#:~:text=Splitter%20.,possible%20de%20faire%20%E2%80%9CBlackjack%E2%80%9D.
+#exemple interface graphique https://github.com/m4xy07/Blackjack-With-UI
 
 import random as rd
 import tkinter as tk
