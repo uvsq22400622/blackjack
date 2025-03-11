@@ -73,6 +73,11 @@ def partie(jeton:int)->int:
             print(f"Nouvelle main : {main_joueur} (Valeur: {valeur(main_joueur)})")
         elif choix=="Rester":
             pass
+        elif choix=="Abandonner":
+            print(f"Vous avez abandonné la partie. Vous perdez la moitié de votre mise.")
+            jeton-=mise // 2 
+            print(f"Solde de jeton : {jeton}")
+            return jeton
 
         #Actions du croupier.
         while valeur(main_croupier)<16:
