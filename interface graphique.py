@@ -65,15 +65,28 @@ def partie(jeton:int)->int:
             bouton_valider.destroy()
 
         #Vérification blackjack.
-        if valeur(main_joueur)>=21:
+        if valeur(main_joueur)==21:
             label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
             label_winner.pack()
-        if valeur(main_croupier)>=21:
+        elif valeur(main_croupier)==21:
             print(label_winner)
-            label_looser = tk.Label(racine, text=f"Le croupier a perdu !")
+            label_croupier_winner = tk.Label(racine, text=f"Le croupier a gagné !")
             #à terminer
             #le joueur ne perd pas même après avoir dépasser 21
-
+        if valeur(main_joueur)>21:
+            label_dust = tk.Label(racine, text=f"Dust!, Vos jetons :"{mise_utilisateur})
+        elif valeur(main_croupier)>21:
+            print("Gagné!")
+            return(jeton+mise)
+        elif valeur(main_croupier)>valeur(main_joueur):
+            print("Perdu!")
+            return(jeton-mise)
+        elif valeur(main_joueur)>valeur(main_croupier):
+            print("Gagné!")
+            return(jeton+mise)
+        elif valeur(main_joueur)==valeur(main_croupier):
+            print("Egalité!")
+            return(jeton)
     bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
     bouton_valider.pack()
         
@@ -82,13 +95,17 @@ def partie(jeton:int)->int:
         nonlocal main_joueur
         main_joueur.extend(carte(paquet,1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
-        main_croupier.extend(carte(paquet,1))
+        while valeur(main_croupier)<16:
+            main_croupier.extend(carte(paquet,1))
         label_croupier.config(text=f"Carte visible du croupier : {main_croupier} (Valeur : {valeur(main_croupier)})")
 
     def rester():
         """Le joueur ne tire pas et passe son tour"""
         label_reste = tk.Label(racine, text="Le joueur reste.")
     
+    
+
+
     label_choix = tk.Label(racine, text="Voulez-vous tirer ou rester? ")
     label_choix.pack()
     bouton_tirer = tk.Button(racine, text="Tirer", command=tirer)
