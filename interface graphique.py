@@ -69,24 +69,24 @@ def partie(jeton:int)->int:
             label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
             label_winner.pack()
         elif valeur(main_croupier)==21:
-            print(label_winner)
             label_croupier_winner = tk.Label(racine, text=f"Le croupier a gagné !")
-            #à terminer
-            #le joueur ne perd pas même après avoir dépasser 21
-        if valeur(main_joueur)>21:
-            label_dust = tk.Label(racine, text=f"Dust!, Vos jetons :"{mise_utilisateur})
+            label_croupier_winner.pack()
+        elif valeur(main_joueur)>21:
+            label_dust = tk.Label(racine, text=f"Dust!, Vos jetons :{mise_utilisateur}")
+            label_dust.pack()
         elif valeur(main_croupier)>21:
-            print("Gagné!")
-            return(jeton+mise)
+            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
+            label_winner.pack()
         elif valeur(main_croupier)>valeur(main_joueur):
-            print("Perdu!")
-            return(jeton-mise)
+            label_loser = tk.Label(racine, text=f"Perdu ! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
+            #modif à faire du res
+            label_loser.pack()
         elif valeur(main_joueur)>valeur(main_croupier):
-            print("Gagné!")
-            return(jeton+mise)
+            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
+            label_winner.pack()
         elif valeur(main_joueur)==valeur(main_croupier):
-            print("Egalité!")
-            return(jeton)
+            label_equality = tk.Label(racine, text=f"Egalité ! Vous avez {jeton} jetons !")
+            
     bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
     bouton_valider.pack()
         
