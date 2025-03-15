@@ -50,6 +50,27 @@ def end_round(message):
     label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
     label_resultat.pack()
 
+### fonction qui ne marche pas avec partie():
+def start_round():
+    """Initialise une nouvelle manche."""
+    global main_joueur, main_croupier, paquet, jeton, mise_utilisateur, game_over
+    main_joueur = []
+    main_croupier = []
+    game_over = False
+
+    paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
+    rd.shuffle(paquet)
+
+    label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+    label_jetons.pack()
+
+    label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
+    label_mise.pack()
+    global entry_mise
+    entry_mise = tk.Entry(racine)
+    entry_mise.pack()
+    bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
+    bouton_valider.pack()
 
 def partie(jeton:int)->int:
     """permet de jouer une partie en misant, renvoie le nombre de jeton à la fin de la partie"""
@@ -72,60 +93,126 @@ def partie(jeton:int)->int:
     verif_blackjack()
 
 
-    def verif_blackjack():
-        """Verifie si le joueur ou le croupier a un blackjack initial."""
-        global jeton, mise_utilisateur
-        joueur_v = valeur(main_joueur)
-        croupier_v = valeur(main_croupier)
+def verif_blackjack():
+    """Verifie si le joueur ou le croupier a un blackjack initial."""
+    global jeton, mise_utilisateur
+    joueur_v = valeur(main_joueur)
+    croupier_v = valeur(main_croupier)
 
-        if joueur_v == 21 and valeur(main_croupier + carte(paquet, 1)) == 21:
-            game_over = True
-            end_round("Blackjack pour vous et le croupier ! Égalité.")
-            jetons += mise_utilisateur
-        elif joueur_v == 21:
-            game_over = True
-            end_round(f"Blackjack ! Vous gagnez {mise_utilisateur * 1.5} jetons.")
-            jetons += mise_utilisateur + (mise_utilisateur * 1.5)
-        elif croupier_v == 11 and valeur(main_croupier + carte(paquet,1)) == 21:
-            game_over = True
+    if joueur_v == 21 and valeur(main_croupier + carte(paquet, 1)) == 21:
+        game_over = True
+        end_round("Blackjack pour vous et le croupier ! Égalité.")
+        jetons += mise_utilisateur
+    elif joueur_v == 21:
+        game_over = True
+        end_round(f"Blackjack ! Vous gagnez {mise_utilisateur * 1.5} jetons.")
+        jetons += mise_utilisateur + (mise_utilisateur * 1.5)
+    elif croupier_v == 11 and valeur(main_croupier + carte(paquet,1)) == 21:
+         game_over = True
             
-            end_round("Blackjack pour le croupier ! Vous perdez votre mise.")
+    end_round("Blackjack pour le croupier ! Vous perdez votre mise.")
 
     
 
     #fonction pour la mise de base
-    def valider_mise():
-        """Valide la mise de l'utilisateur."""
-        mise_utilisateur = int(entry_mise.get())
-        if mise_utilisateur>jeton:
-            label_erreur = tk.Label(racine, text="Votre mise n'est pas valide, veuillez entrer un montant valide!")
-            label_erreur.pack()
-        else:
-            print(f"Mise acceptée : {mise_utilisateur}") #test
-            label_mise.destroy()
-            entry_mise.destroy()
-            bouton_valider.destroy()
+def valider_mise():
+    """Valide la mise de l'utilisateur."""
+    mise_utilisateur = int(entry_mise.get())
+    if mise_utilisateur>jeton:
+        label_erreur = tk.Label(racine, text="Votre mise n'est pas valide, veuillez entrer un montant valide!")
+        label_erreur.pack()
+    else:
+        print(f"Mise acceptée : {mise_utilisateur}") #test
+        label_mise.destroy()
+        entry_mise.destroy()
+        bouton_valider.destroy()
 
-        #Vérification blackjack.
+    #Vérification blackjack.
         
             
     bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
     bouton_valider.pack()
         
-    def tirer():
-        """Rajoute une carte au joueur"""
-        nonlocal main_joueur
-        main_joueur.extend(carte(paquet,1))
-        label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
-        label_joueur.pack()
+def tirer():
+    global main_joueur, game_over, paquet, label_joueur
+    """Rajoute une carte au joueur"""
+    if not game_over:
+    main_joueur.extend(carte(paquet, 1))
+    label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
+    if valeur(main_joueur) > 21:
+        game_over = True
+        end_round("Dust !, vous perdez votre mise")
+    elif valeur(main_joueur) == 21 :
+        game_over = True
         
-
-    def rester():
-        """Le joueur ne tire pas et passe son tour"""
+def rester():
+    """Le joueur ne tire pas et passe son tour"""
+    global game_over
+    if not game_over:
+        game_over = True
         label_reste = tk.Label(racine, text="Le joueur reste.")
         label_reste.pack()
     
     #rajouter le bouton abandonner, ....
+
+### pas fonctionnel
+def tour_croupier():
+    global main_croupier, game_over, paquet, label_croupier
+    if len(main_croupier)==1:
+        main_croupier.extend(carte(paquet, 1))
+        label_croupier.config(text=f"Main du croupier : {main_croupier + carte(paquet, 0)} (Valeur : {valeur(main_croupier + carte(paquet, 0))}")
+    else:
+        label_croupier.config(text=f"Main du croupier : {main_croupier + carte(paquet, 0)} (Valeur : {valeur(main_croupier + carte(paquet, 0))})")
+
+
+    while valeur(main_croupier) < 17:
+        main_croupier.extend(carte(paquet,1))
+        label_croupier.config(text=f"Main du croupier : {main_croupier} (Valeur :{valeur(main_croupier)})")
+        racine.update #met à jour l'affichage
+        if valeur(main_croupier) > 21:
+            game_over = True
+            end_round(f"Le croupier a busté ! Vous gagnez {mise_utilisateur * 2} jetons.")
+            global jeton
+            jeton += mise_utilisateur * 2
+            nouvelle_manche()
+            return
+    if not game_over:
+        determine_winner()
+def determine_winner():
+    joueur_v = valeur(main_joueur)
+    croupier_v = valeur(main_croupier)
+    global jeton, mise_utilisateur
+
+    if joueur_v > 21:
+        pass
+    elif croupier_v > 21:
+        pass
+    elif croupier_v > 21:
+        end_round(f"Vous avez {joueur_v}, le croupier a {croupier_v}. Vous avez gagnez {mise_utilisateur*2} jetons.")
+        jeton += mise_utilisateur * 2
+    elif croupier_v > joueur_v:
+        end_round(f"Vous avez {joueur_v}, le croupier a {croupier_v}. Vous perdez votre mise.")
+    else:
+        end_round(f"Egalité ({joueur_v}). Vous récupérez votre mise.")
+    nouvelle_manche()
+
+def nouvelle_manche():
+    global bouton_tirer, bouton_rester
+    if 'bouton_tirer' in globals():
+        bouton_tirer.destroy()
+    if 'bouton_rester' in globals():
+        bouton_rester.destroy()
+    bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=start_round)
+    bouton_nv_manche.pack()
+
+def abandonner():
+    global jeton, mise_utilisateur, game_over
+    if not game_over:
+        game_over = True
+        end_round(f"Vous avez abanconné. Vous récupérez {mise_utilisateur / 2} jetons.")
+        jeton += mise_utilisateur / 2
+        nouvelle_manche()
+
 
 jeton = 0
 mise_utilisateur = 0
