@@ -10,6 +10,8 @@ def play(event):
     label_demarrage.destroy()
     bouton_quitter.destroy()
     bouton_demarrer.destroy()
+    global jeton
+    
     partie(100) #initialise le joueur à 100 jetons
 
 def carte(paquet:list, n:int)->list:
@@ -34,6 +36,21 @@ def valeur(main:list)->int:
         nb_as -= 1
     return(valeur)
 
+
+def fin_partie():
+    racine.destroy()
+    end = tk.Tk()
+    label_end = tk.Label(end,text="Lost !", font = ("helvetica", "30"), width=50)
+    label_end.pack()
+    end.mainloop()
+
+def end_round(message):
+    """Affiche le résultat de la manche et désactive les boutons d'action."""
+    global label_resultat
+    label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
+    label_resultat.pack()
+
+
 def partie(jeton:int)->int:
     """permet de jouer une partie en misant, renvoie le nombre de jeton à la fin de la partie"""
 
@@ -45,11 +62,36 @@ def partie(jeton:int)->int:
     label_croupier=tk.Label(racine,text=f"Carte visible du croupier : {main_croupier} (Valeur : {valeur(main_croupier)})")
     label_croupier.pack()
 
-    # Création du champ de saisie pour la mise
-    label_mise = tk.Label(racine, text="Vous avez 100 jetons, combien voulez vous miser ? :")
-    label_mise.pack()
-    entry_mise = tk.Entry(racine)
-    entry_mise.pack()
+    label_choix = tk.Label(racine, text="Voulez-vous tirer ou rester? ")
+    label_choix.pack()
+    bouton_tirer = tk.Button(racine, text="Tirer", command=tirer)
+    bouton_tirer.pack()
+
+    bouton_rester = tk.Button(racine, text="Rester", command=rester)
+    bouton_rester.pack()
+    verif_blackjack()
+
+
+    def verif_blackjack():
+        """Verifie si le joueur ou le croupier a un blackjack initial."""
+        global jeton, mise_utilisateur
+        joueur_v = valeur(main_joueur)
+        croupier_v = valeur(main_croupier)
+
+        if joueur_v == 21 and valeur(main_croupier + carte(paquet, 1)) == 21:
+            game_over = True
+            end_round("Blackjack pour vous et le croupier ! Égalité.")
+            jetons += mise_utilisateur
+        elif joueur_v == 21:
+            game_over = True
+            end_round(f"Blackjack ! Vous gagnez {mise_utilisateur * 1.5} jetons.")
+            jetons += mise_utilisateur + (mise_utilisateur * 1.5)
+        elif croupier_v == 11 and valeur(main_croupier + carte(paquet,1)) == 21:
+            game_over = True
+            
+            end_round("Blackjack pour le croupier ! Vous perdez votre mise.")
+
+    
 
     #fonction pour la mise de base
     def valider_mise():
@@ -65,27 +107,7 @@ def partie(jeton:int)->int:
             bouton_valider.destroy()
 
         #Vérification blackjack.
-        if valeur(main_joueur)==21:
-            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
-            label_winner.pack()
-        elif valeur(main_croupier)==21:
-            label_croupier_winner = tk.Label(racine, text=f"Le croupier a gagné !")
-            label_croupier_winner.pack()
-        elif valeur(main_joueur)>21:
-            label_dust = tk.Label(racine, text=f"Dust!, Vos jetons :{mise_utilisateur}")
-            label_dust.pack()
-        elif valeur(main_croupier)>21:
-            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
-            label_winner.pack()
-        elif valeur(main_croupier)>valeur(main_joueur):
-            label_loser = tk.Label(racine, text=f"Perdu ! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
-            #modif à faire du res
-            label_loser.pack()
-        elif valeur(main_joueur)>valeur(main_croupier):
-            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
-            label_winner.pack()
-        elif valeur(main_joueur)==valeur(main_croupier):
-            label_equality = tk.Label(racine, text=f"Egalité ! Vous avez {jeton} jetons !")
+        
             
     bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
     bouton_valider.pack()
@@ -95,26 +117,20 @@ def partie(jeton:int)->int:
         nonlocal main_joueur
         main_joueur.extend(carte(paquet,1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
-        while valeur(main_croupier)<16:
-            main_croupier.extend(carte(paquet,1))
-        label_croupier.config(text=f"Carte visible du croupier : {main_croupier} (Valeur : {valeur(main_croupier)})")
+        label_joueur.pack()
+        
 
     def rester():
         """Le joueur ne tire pas et passe son tour"""
         label_reste = tk.Label(racine, text="Le joueur reste.")
+        label_reste.pack()
     
-    
-
-
-    label_choix = tk.Label(racine, text="Voulez-vous tirer ou rester? ")
-    label_choix.pack()
-    bouton_tirer = tk.Button(racine, text="Tirer", command=tirer)
-    bouton_tirer.pack()
-
-    bouton_rester = tk.Button(racine, text="Rester", command=rester)
-    bouton_rester.pack()
-
     #rajouter le bouton abandonner, ....
+
+jeton = 0
+mise_utilisateur = 0
+game_over = False
+
 
 
 #Création du menu du jeu
@@ -143,3 +159,28 @@ paquet=[f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
 
 racine.mainloop()
 
+#while valeur(main_croupier)<16:
+#            main_croupier.extend(carte(paquet,1))
+#        label_croupier.config(text=f"Carte visible du croupier : {main_croupier} (Valeur : {valeur(main_croupier)})")
+#        if valeur(main_joueur)==21:
+#            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
+#            label_winner.pack()
+#        elif valeur(main_croupier)==21:
+#           label_croupier_winner = tk.Label(racine, text=f"Le croupier a gagné !")
+#          label_croupier_winner.pack()
+#        elif valeur(main_joueur)>21:
+#            label_dust = tk.Label(racine, text=f"Dust!, Vos jetons :{mise_utilisateur}")
+#            label_dust.pack()
+#        elif valeur(main_croupier)>21:
+#            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
+#            label_winner.pack()
+#        elif valeur(main_croupier)>valeur(main_joueur):
+#            label_loser = tk.Label(racine, text=f"Perdu ! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
+#            #modif à faire du res
+#            label_loser.pack()
+#        elif valeur(main_joueur)>valeur(main_croupier):
+#            label_winner = tk.Label(racine, text=f"Blackjack! Vous avez {jeton+int(mise_utilisateur*1.5)} jetons !")
+#            label_winner.pack()
+#        elif valeur(main_joueur)==valeur(main_croupier):
+#            label_equality = tk.Label(racine, text=f"Egalité ! Vous avez {jeton} jetons !")
+#            label_equality.pack()
