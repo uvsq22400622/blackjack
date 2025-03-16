@@ -202,6 +202,11 @@ label_mise_acceptée = tk.Label(racine, text="", fg="green")
 
 racine.mainloop()
 
+#------- Statistique de suivi----------
+
+label_statistiques = tk.Label(racine, text=f"Manches gagnées : {manches_gagnees}\nManches perdues : {manches_perdues}")
+label_statistiques.pack()
+
 # à resoudre :
 # fonction tirer/rester
 # effacer l'historique de jeu sans créer de nouvelle fenetre
