@@ -230,6 +230,12 @@ def tirer():
             bouton_rester.config(state="disabled")
             verif_blackjack()
 
+# ------- Tableau de bord--------
+
+label_jetons = tk.Label(racine, text=f"Jetons : {jeton}", font=("Helvetica", 14))
+label_jetons.grid(row=0, column=0, sticky="w")
+
+
 # à resoudre :
 # fonction tirer/rester
 # effacer l'historique de jeu sans créer de nouvelle fenetre
