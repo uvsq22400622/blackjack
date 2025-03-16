@@ -22,7 +22,6 @@ def carte(paquet:list, n:int)->list:
 def commencer_partie():
     """permet de jouer une partie en misant, renvoie le nombre de jeton à la fin de la partie"""
     global label_jetons, label_mise, entry_mise, bouton_valider, label_erreur, label_mise_acceptée
-    
 
     label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
     label_jetons.pack()
@@ -59,6 +58,7 @@ def mise_soumise():
         mise_utilisateur = mise
         jeton -= mise_utilisateur
         label_erreur.pack_forget() #cache le message d'erreur
+        label_mise.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
         label_mise_acceptée.config(text=f"Mise acceptée : {mise_utilisateur}")
         label_mise_acceptée.pack()
         entry_mise.destroy()
