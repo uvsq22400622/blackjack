@@ -206,6 +206,17 @@ racine.mainloop()
 
 label_statistiques = tk.Label(racine, text=f"Manches gagnées : {manches_gagnees}\nManches perdues : {manches_perdues}")
 label_statistiques.pack()
+#----- Bouton tirer ---------
+
+def tirer():
+    global main_joueur, paquet, label_joueur, bouton_tirer, bouton_rester
+    if not game_over:
+        main_joueur.extend(carte(paquet, 1))
+        label_joueur.config(text=f"Votre main : {main_joueur} (Valeur: {valeur(main_joueur)})")
+        if valeur(main_joueur) >= 21:  # Arrête automatiquement si on dépasse ou atteint 21
+            bouton_tirer.config(state="disabled")
+            bouton_rester.config(state="disabled")
+            verif_blackjack()
 
 # à resoudre :
 # fonction tirer/rester
