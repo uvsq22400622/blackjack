@@ -79,6 +79,15 @@ def partie(jeton:int)->int:
             print(f"Solde de jeton : {jeton}")
             return jeton
 
+        #Doubler sa mise 
+def doubler():
+    global mise, jeton
+    if mise * 2 <= jeton:
+        mise *= 2
+        print(f"Votre mise est maintenant de {mise}.")
+        tirer()
+    else:
+        print("Vous n'avez pas assez de jetons pour doubler.")
         #Actions du croupier.
         while valeur(main_croupier)<16:
             main_croupier.extend(carte(paquet,1))
