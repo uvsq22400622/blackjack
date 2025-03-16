@@ -147,18 +147,16 @@ def verif_blackjack():
         game_over = True
         message("Blackjack pour vous et le croupier ! Égalité.")
         jetons += mise_utilisateur
-        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
-        bouton_nv_manche.pack()
+    
     elif joueur_v == 21:
         game_over = True
         message(f"Blackjack ! Vous gagnez {mise_utilisateur * 1.5} jetons.")
         jetons += mise_utilisateur + (mise_utilisateur * 1.5)
-        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
-        bouton_nv_manche.pack()
+        
     elif valeur(main_joueur) > 21:
         message(f"Dust ! vous perdez votre mise")
-        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
-        bouton_nv_manche.pack()
+    bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
+    bouton_nv_manche.pack()
 
 def message(message):
     """Affiche le résultat de la manche et désactive les boutons d'action."""
@@ -203,3 +201,8 @@ label_mise_acceptée = tk.Label(racine, text="", fg="green")
 
 
 racine.mainloop()
+
+# à resoudre :
+# fonction tirer/rester
+# effacer l'historique de jeu sans créer de nouvelle fenetre
+# interface couleur, taille 
