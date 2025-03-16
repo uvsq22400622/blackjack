@@ -271,4 +271,21 @@ def rester():
     bouton_rester.config(state="disabled")
 
 # effacer l'historique de jeu sans créer de nouvelle fenetre
+
+def effacer_historique():
+    global main_joueur, main_croupier, label_main_joueur, label_main_croupier, label_resultat
+    
+    # Réinitialisation des mains
+    main_joueur = []
+    main_croupier = []
+    
+    # Réinitialisation des labels
+    label_main_joueur.config(text="Votre main : ")
+    label_main_croupier.config(text="Main du croupier : ")
+    label_resultat.config(text="")
+    
+    # Réactiver les boutons
+    bouton_tirer.config(state="normal")
+    bouton_rester.config(state="normal")
+
 # interface couleur, taille 
