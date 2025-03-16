@@ -289,3 +289,25 @@ def effacer_historique():
     bouton_rester.config(state="normal")
 
 # interface couleur, taille 
+
+# Création des labels pour afficher les mains
+label_main_joueur = tk.Label(racine, text="Votre main : ", font=("Helvetica", 14))
+label_main_joueur.grid(row=1, column=0, sticky="w")
+
+label_main_croupier = tk.Label(racine, text="Main du croupier : ", font=("Helvetica", 14))
+label_main_croupier.grid(row=2, column=0, sticky="w")
+
+label_resultat = tk.Label(racine, text="", font=("Helvetica", 14))
+label_resultat.grid(row=3, column=0, sticky="w")
+
+# Boutons pour actions du joueur
+bouton_tirer = tk.Button(racine, text="Tirer", command=tirer)
+bouton_tirer.grid(row=4, column=0)
+
+bouton_rester = tk.Button(racine, text="Rester", command=rester)
+bouton_rester.grid(row=4, column=1)
+
+# Bouton pour réinitialiser le jeu
+bouton_reset = tk.Button(racine, text="Réinitialiser", command=effacer_historique)
+bouton_reset.grid(row=5, column=0, columnspan=2)
+
