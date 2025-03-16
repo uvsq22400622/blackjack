@@ -1,5 +1,17 @@
 import tkinter as tk
 import random as rd
+#---------- Design de l'interface ---------
+label_demarrage = tk.Label(
+    racine, text="Blackjack !", padx=20, pady=20,
+    font=("helvetica", "30"), bg="darkgreen", fg="white"
+)
+label_demarrage.pack()
+
+bouton_demarrer = tk.Button(
+    racine, text="Play", font=("helvetica", "20"), width=20,
+    bg="white", fg="black", relief="raised"
+)
+bouton_demarrer.pack(pady=10)
 
 # --------- Paquet de cartes ----------
 rangs={"As":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Valet":10, "Dame":10, "Roi":10}
