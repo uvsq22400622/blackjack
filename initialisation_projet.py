@@ -60,10 +60,13 @@ def partie(jeton:int)->int:
         print("Votre mise n'est pas valide, veuillez entrer un montant valide!")
         mise=int(input("Quelle est votre nouvelle mise? "))
 
-    #Vérification blackjack.
-    if valeur(main_joueur)==21:
-        print("Blackjack!")
-        return(jeton+int(mise*1.5))
+    # Vérification possibilité de splitter
+if len(main_joueur) == 2 and main_joueur[0].split(" de ")[0] == main_joueur[1].split(" de ")[0]:
+    choix_split = input("Vos deux cartes ont la même valeur. Voulez-vous splitter ? [Oui, Non] ").capitalize()
+    if choix_split == "Oui":
+        jeton = splitter(main_joueur, paquet, mise, jeton)
+        return jeton
+
     
    while valeur(main_joueur) < 21:
     # Permet au joueur de choisir ses actions.
