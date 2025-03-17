@@ -153,7 +153,7 @@ def verif_blackjack():
         message(f"Blackjack ! Vous gagnez {mise_utilisateur * 1.5} jetons.")
         jetons += mise_utilisateur + (mise_utilisateur * 1.5)
         
-    elif valeur(main_joueur) > 21:
+    elif croupier_v > 21:
         message(f"Dust ! vous perdez votre mise")
     bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
     bouton_nv_manche.pack()
@@ -204,25 +204,25 @@ racine.mainloop()
 
 #------- Statistique de suivi----------
 
-label_statistiques = tk.Label(racine, text=f"Manches gagnées : {manches_gagnees}\nManches perdues : {manches_perdues}")
-label_statistiques.pack()
+#label_statistiques = tk.Label(racine, text=f"Manches gagnées : {manches_gagnees}\nManches perdues : {manches_perdues}")
+#label_statistiques.pack()
 #----- Bouton tirer ---------
 
-def tirer():
-    global main_joueur, paquet, label_joueur, bouton_tirer, bouton_rester
-    if not game_over:
-        main_joueur.extend(carte(paquet, 1))
-        label_joueur.config(text=f"Votre main : {main_joueur} (Valeur: {valeur(main_joueur)})")
-        if valeur(main_joueur) >= 21:  # Arrête automatiquement si on dépasse ou atteint 21
-            bouton_tirer.config(state="disabled")
-            bouton_rester.config(state="disabled")
-            verif_blackjack()
+#def tirer():
+#    global main_joueur, paquet, label_joueur, bouton_tirer, bouton_rester
+#    if not game_over:
+#        main_joueur.extend(carte(paquet, 1))
+#        label_joueur.config(text=f"Votre main : {main_joueur} (Valeur: {valeur(main_joueur)})")
+#        if valeur(main_joueur) >= 21:  # Arrête automatiquement si on dépasse ou atteint 21
+#            bouton_tirer.config(state="disabled")
+#            bouton_rester.config(state="disabled")
+#            verif_blackjack()
 
 # ------- Tableau de bord--------
 
 label_jetons = tk.Label(racine, text=f"Jetons : {jeton}", font=("Helvetica", 14))
 label_jetons.grid(row=0, column=0, sticky="w")
-
+# déjà présent avec les label_mise.config donc à revoir si utile
 
 # à resoudre :
 # fonction tirer/rester
@@ -295,7 +295,7 @@ bouton_tirer.grid(row=4, column=0)
 bouton_rester = tk.Button(racine, text="Rester", command=rester)
 bouton_rester.grid(row=4, column=1)
 
-# Bouton pour réinitialiser le jeu
+# Bouton pour réinitialiser le jeu (ne s'affiche pas)
 bouton_reset = tk.Button(racine, text="Réinitialiser", command=effacer_historique)
 bouton_reset.grid(row=5, column=0, columnspan=2)
 
