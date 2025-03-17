@@ -119,6 +119,43 @@ def abandonner(jeton, mise):
     print(f"Solde de jetons : {jeton}")
     return jeton
 
+# Fonction Splitter
+
+def splitter(main_joueur, paquet, mise, jeton):
+    """Permet de splitter la main si les deux cartes initiales sont de même valeur."""
+    if len(main_joueur) == 2 and main_joueur[0].split(" de ")[0] == main_joueur[1].split(" de ")[0]:
+        print("Vous choisissez de splitter votre main.")
+        
+        # Création de deux mains séparées.
+        main_split_1 = [main_joueur[0], *carte(paquet, 1)]
+        main_split_2 = [main_joueur[1], *carte(paquet, 1)]
+
+        print(f"Main 1 : {main_split_1} (Valeur: {valeur(main_split_1)})")
+        print(f"Main 2 : {main_split_2} (Valeur: {valeur(main_split_2)})")
+
+        # Gérer les deux mains séparément (par exemple en utilisant une boucle ou des appels séparés).
+        mise_split = mise  # Mise pour chaque main.
+        jeton = partie_split(main_split_1, paquet, mise_split, jeton)
+        jeton = partie_split(main_split_2, paquet, mise_split, jeton)
+
+    else:
+        print("Vous ne pouvez pas splitter cette main.")
+    return jeton
+
+def partie_split(main_split, paquet, mise, jeton):
+    """Joue une main split de manière indépendante."""
+    print(f"Vous jouez une main split : {main_split} (Valeur: {valeur(main_split)})")
+    while valeur(main_split) < 21:
+        choix = input("Que voulez-vous faire avec cette main ? [Tirer, Rester] ").capitalize()
+        if choix == "Tirer":
+            main_split.extend(carte(paquet, 1))
+            print(f"Nouvelle main : {main_split} (Valeur: {valeur(main_split)})")
+            if valeur(main_split) > 21:
+                print("Vous avez dépassé 21. Vous perdez cette main !")
+                return jeton - mise
+        elif choix == "Rester":
+            break
+    return jeton
 
 #Création d'une fonction pour lancer le jeu et jouer.
 def jouer():
