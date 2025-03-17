@@ -65,19 +65,21 @@ def partie(jeton:int)->int:
         print("Blackjack!")
         return(jeton+int(mise*1.5))
     
-    while valeur(main_joueur)<21: 
-        #Permet au joueur de choisir ses actions.
-        choix=input("Voulez-vous tirer ou rester? ")
-        if choix=="Tirer":
-            main_joueur.extend(carte(paquet,1))
-            print(f"Nouvelle main : {main_joueur} (Valeur: {valeur(main_joueur)})")
-        elif choix=="Rester":
-            pass
-        elif choix=="Abandonner":
-            print(f"Vous avez abandonné la partie. Vous perdez la moitié de votre mise.")
-            jeton-=mise // 2 
-            print(f"Solde de jeton : {jeton}")
-            return jeton
+   while valeur(main_joueur) < 21:
+    # Permet au joueur de choisir ses actions.
+    choix = input("Que voulez-vous faire ? [Tirer, Rester, Abandonner] ").capitalize()
+
+    if choix == "Tirer":
+        main_joueur.extend(carte(paquet, 1))
+        print(f"Nouvelle main : {main_joueur} (Valeur: {valeur(main_joueur)})")
+    elif choix == "Rester":
+        break
+    elif choix == "Abandonner":
+        jeton = abandonner(jeton, mise)
+        return jeton
+    else:
+        print("Choix invalide, veuillez réessayer.")
+
 
         #Doubler sa mise 
 def doubler():
