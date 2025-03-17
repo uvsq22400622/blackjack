@@ -110,6 +110,16 @@ def doubler():
             print("Egalité!")
             return(jeton)
 
+# Fonction Abandonner 
+
+def abandonner(jeton, mise):
+    """Permet au joueur d'abandonner la partie et de perdre la moitié de sa mise."""
+    print("Vous avez abandonné la partie. Vous perdez la moitié de votre mise.")
+    jeton -= mise // 2
+    print(f"Solde de jetons : {jeton}")
+    return jeton
+
+
 #Création d'une fonction pour lancer le jeu et jouer.
 def jouer():
     """permet de gérer le jeu et les parties"""
