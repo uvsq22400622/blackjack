@@ -131,11 +131,11 @@ def rester():
     """Le joueur ne tire pas et passe son tour"""
     global game_over, label_croupier
     if not game_over:
-        game_over = True
         label_reste = tk.Label(racine, text="Le joueur reste.")
         label_reste.pack()
     main_croupier.extend(carte(paquet, 1))
     label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+    verif_blackjack()
 
 def verif_blackjack():
     """Verifie si le joueur ou le croupier a un blackjack initial."""
@@ -155,8 +155,9 @@ def verif_blackjack():
         
     elif croupier_v > 21:
         message(f"Dust ! vous perdez votre mise")
-    bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
-    bouton_nv_manche.pack()
+    if game_over:
+        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
+        bouton_nv_manche.pack()
 
 def message(message):
     """Affiche le résultat de la manche et désactive les boutons d'action."""
