@@ -238,41 +238,6 @@ racine.mainloop()
 
 label_jetons = tk.Label(racine, text=f"Jetons : {jeton}", font=("Helvetica", 14))
 label_jetons.grid(row=0, column=0, sticky="w")
-# déjà présent avec les label_mise.config donc à revoir si utile
-
-# à resoudre :
-# fonction tirer/rester
-## !!!!! ses fonctions existent déjà tester le code pour voir le problème
-#def tirer():
-#    global main_joueur, paquet, label_main_joueur
-#    main_joueur.extend(carte(paquet, 1))
-#    valeur_joueur = valeur(main_joueur)
-#   label_main_joueur.config(text=f"Votre main : {main_joueur} (Valeur: {valeur_joueur})")
-#    
-#    if valeur_joueur > 21:
-#        label_resultat.config(text="Bust! Vous avez perdu.")
-#        bouton_tirer.config(state="disabled")
-#        bouton_rester.config(state="disabled")
-#    elif valeur_joueur == 21:
-#        label_resultat.config(text="Blackjack! Vous avez gagné.")
-#        bouton_tirer.config(state="disabled")
-#        bouton_rester.config(state="disabled")
-
-#def rester():
-#    global main_croupier, label_main_croupier, label_resultat
-#    while valeur(main_croupier) < 17:
-#        main_croupier.extend(carte(paquet, 1))
-#    label_main_croupier.config(text=f"Main du croupier : {main_croupier} (Valeur: {valeur(main_croupier)})")
-#    
-#    if valeur(main_croupier) > 21 or valeur(main_joueur) > valeur(main_croupier):
-#        label_resultat.config(text="Félicitations, vous avez gagné!")
-#    elif valeur(main_croupier) > valeur(main_joueur):
-#        label_resultat.config(text="Désolé, vous avez perdu.")
-#    else:
-#        label_resultat.config(text="Égalité!")
-#    
-#    bouton_tirer.config(state="disabled")
-#    bouton_rester.config(state="disabled")
 
 # effacer l'historique de jeu sans créer de nouvelle fenetre
 
