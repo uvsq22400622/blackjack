@@ -153,7 +153,8 @@ def verif_blackjack():
         message(f"Blackjack ! Vous gagnez {mise_utilisateur * 1.5} jetons.")
         jetons += mise_utilisateur + (mise_utilisateur * 1.5)
         
-    elif croupier_v > 21:
+    elif croupier_v == 21:
+        game_over = True
         message(f"Dust ! vous perdez votre mise")
     if game_over:
         bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
