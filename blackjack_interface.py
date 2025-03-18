@@ -181,7 +181,8 @@ def message(message):
 
 def nouvelle_manche():
     global game_over
-    
+    for widget in racine.winfo_children(): #supprime tout les widgets
+        widget.destroy()
     game_over =False
     
 
