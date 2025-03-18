@@ -141,7 +141,7 @@ def rester():
     if game_over:
         label_reste = tk.Label(racine, text="Le joueur reste.")
         label_reste.pack()
-    while valeur(main_croupier) <= 17:
+    while valeur(main_croupier) < 17:
         main_croupier.extend(carte(paquet, 1))
         label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
         if valeur(main_croupier) >= 21:
@@ -182,6 +182,7 @@ def message(message):
 def nouvelle_manche():
     for widget in racine.winfo_children(): #supprime tout les widgets
         widget.destroy()
+    game_over =False
     
 
 
