@@ -282,4 +282,12 @@ bouton_rester.grid(row=4, column=1)
 bouton_reset = tk.Button(racine, text="Réinitialiser", command=effacer_historique)
 bouton_reset.grid(row=5, column=0, columnspan=2)
 
-#----------Nouvelles fonctions, autres ---------------------
+# à faire qui ne compte pas dans la note
+#interface oppérationnel /
+#ajout des nouvelles fonctions + bouttons
+
+#----------Nouvelles fonctions, autres pour la note --------
+# multijoueur 
+# demande à l'utilisateur pour l'As
+# historique
+# A FAIRE : LIRE LE CODE ET POSER DES QUESTIONS SI INCROMPREHENSION
