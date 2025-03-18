@@ -114,9 +114,9 @@ def quit(event):
     racine.destroy()
 
 def tirer():
-    global main_joueur, game_over, paquet, label_joueur
+    global main_joueur, game_over, paquet, label_joueur, label_croupier
     """Rajoute une carte au joueur"""
-    if not game_over:
+    if game_over:
         main_joueur.extend(carte(paquet, 1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
         if valeur(main_joueur) > 21:
@@ -128,7 +128,7 @@ def tirer():
             verif_blackjack()
     while valeur(main_croupier) <= 17  and not game_over:
         main_croupier.extend(carte(paquet, 1))
-        label_main_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+        label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
         if valeur(main_croupier) > 17:
             game_over = True
             verif_blackjack()
@@ -138,13 +138,13 @@ def tirer():
 def rester():
     """Le joueur ne tire pas et passe son tour"""
     global game_over, label_croupier
-    if not game_over:
+    if game_over:
         label_reste = tk.Label(racine, text="Le joueur reste.")
         label_reste.pack()
     while valeur(main_croupier) <= 17:
         main_croupier.extend(carte(paquet, 1))
         label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
-        if valeur(main_croupier) >17:
+        if valeur(main_croupier) >= 21:
             game_over = True
             verif_blackjack()
             return  
