@@ -170,7 +170,7 @@ def verif_blackjack():
         game_over = True
         message(f"Dust ! vous perdez votre mise")
     if game_over:
-        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
+        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
         bouton_nv_manche.pack()
 
 def message(message):
@@ -185,6 +185,7 @@ def nouvelle_manche():
         if isinstance(widget, (tk.Label, tk.Button)):  # Garde les autres éléments intacts
             widget.destroy()
     game_over =False
+    commencer_partie()
     
 
 
