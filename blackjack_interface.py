@@ -152,7 +152,7 @@ def rester():
 
 def verif_blackjack():
     """Verifie si le joueur ou le croupier a un blackjack initial."""
-    global jeton, mise_utilisateur, game_over
+    global jeton, mise_utilisateur, game_over, bouton_nv_manche
     joueur_v = valeur(main_joueur)
     croupier_v = valeur(main_croupier)
 
@@ -180,8 +180,8 @@ def message(message):
     label_resultat.pack()
 
 def nouvelle_manche():
-    for widget in racine.winfo_children(): #supprime tout les widgets
-        widget.destroy()
+    global game_over
+    
     game_over =False
     
 
