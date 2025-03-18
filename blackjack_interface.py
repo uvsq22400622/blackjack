@@ -126,6 +126,8 @@ def tirer():
         elif valeur(main_joueur) == 21 :
             game_over = True
             verif_blackjack()
+        else:
+            pass
     while valeur(main_croupier) <= 17  and not game_over:
         main_croupier.extend(carte(paquet, 1))
         label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
