@@ -126,6 +126,9 @@ def tirer():
     elif valeur(main_joueur) == 21 :
         verif_blackjack()
         game_over = True
+    while valeur(main_croupier) <= 17:
+        game_over = False
+        main_croupier.extend(carte(paquet, 1))
 
 def rester():
     """Le joueur ne tire pas et passe son tour"""
@@ -133,8 +136,9 @@ def rester():
     if not game_over:
         label_reste = tk.Label(racine, text="Le joueur reste.")
         label_reste.pack()
-    main_croupier.extend(carte(paquet, 1))
-    label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+    while valeur(main_croupier) <= 17:
+        main_croupier.extend(carte(paquet, 1))
+        label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
     verif_blackjack()
 
 def verif_blackjack():
