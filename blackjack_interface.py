@@ -236,8 +236,8 @@ racine.mainloop()
 
 # ------- Tableau de bord--------
 
-label_jetons = tk.Label(racine, text=f"Jetons : {jeton}", font=("Helvetica", 14))
-label_jetons.grid(row=0, column=0, sticky="w")
+#label_jetons = tk.Label(racine, text=f"Jetons : {jeton}", font=("Helvetica", 14))
+#label_jetons.grid(row=0, column=0, sticky="w")
 
 # effacer l'historique de jeu sans créer de nouvelle fenetre
 
