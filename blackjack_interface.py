@@ -72,7 +72,7 @@ def mains_joueurs():
 
     main_joueur=carte(paquet,2) #Création de la main initiale du joueur.
     main_croupier=carte(paquet,1) #Création de la main initiale du croupier.
-
+    verif_blackjack()
     label_joueur = tk.Label(racine, text=f"Votre main : {main_joueur}, (Valeur: {valeur(main_joueur)})")
     label_joueur.pack()
 
@@ -119,16 +119,21 @@ def tirer():
     if not game_over:
         main_joueur.extend(carte(paquet, 1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
-    if valeur(main_joueur) > 21:
-        game_over = True
-        verif_blackjack()
-        return"Dust !, vous perdez votre mise"
-    elif valeur(main_joueur) == 21 :
-        verif_blackjack()
-        game_over = True
-    while valeur(main_croupier) <= 17:
-        game_over = False
+        if valeur(main_joueur) > 21:
+            game_over = True
+            verif_blackjack()
+            return"Dust !, vous perdez votre mise"
+        elif valeur(main_joueur) == 21 :
+            game_over = True
+            verif_blackjack()
+    while valeur(main_croupier) <= 17  and not game_over:
         main_croupier.extend(carte(paquet, 1))
+        label_main_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+        if valeur(main_croupier) > 17:
+            game_over = True
+            verif_blackjack()
+            return
+    verif_blackjack()
 
 def rester():
     """Le joueur ne tire pas et passe son tour"""
@@ -139,6 +144,10 @@ def rester():
     while valeur(main_croupier) <= 17:
         main_croupier.extend(carte(paquet, 1))
         label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+        if valeur(main_croupier) >17:
+            game_over = True
+            verif_blackjack()
+            return  
     verif_blackjack()
 
 def verif_blackjack():
@@ -150,14 +159,14 @@ def verif_blackjack():
     if joueur_v == 21 and valeur(main_croupier + carte(paquet, 1)) == 21:
         game_over = True
         message("Blackjack pour vous et le croupier ! Égalité.")
-        jetons += mise_utilisateur
+        jeton += mise_utilisateur
     
     elif joueur_v == 21:
         game_over = True
         message(f"Blackjack ! Vous gagnez {mise_utilisateur * 1.5} jetons.")
-        jetons += mise_utilisateur + (mise_utilisateur * 1.5)
+        jeton += mise_utilisateur + (mise_utilisateur * 1.5)
         
-    elif croupier_v == 21:
+    elif croupier_v == 21 or joueur_v > 21:
         game_over = True
         message(f"Dust ! vous perdez votre mise")
     if game_over:
