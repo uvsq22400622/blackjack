@@ -163,14 +163,14 @@ def verif_blackjack():
     
     elif joueur_v == 21:
         game_over = True
-        message(f"Blackjack ! Vous gagnez {mise_utilisateur * 1.5} jetons.")
+        message(f"Blackjack ! Vous gagnez {int(mise_utilisateur * 1.5)} jetons.")
         jeton += mise_utilisateur + (mise_utilisateur * 1.5)
         
     elif croupier_v == 21 or joueur_v > 21:
         game_over = True
         message(f"Dust ! vous perdez votre mise")
-    if game_over:
-        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
+    if game_over == True:
+        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
         bouton_nv_manche.pack()
 
 def message(message):
@@ -179,13 +179,10 @@ def message(message):
     label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
     label_resultat.pack()
 
-def nouvelle_manche():
-    global game_over
-    for widget in racine.winfo_children():
-        if isinstance(widget, (tk.Label, tk.Button)):  # Garde les autres éléments intacts
-            widget.destroy()
+def nouvelle_manche(game_over):
+    for widget in racine.winfo_children(): #supprime tout les widgets
+        widget.destroy()
     game_over =False
-    commencer_partie()
     
 
 
