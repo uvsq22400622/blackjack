@@ -182,11 +182,24 @@ def message(message):
     label_resultat.pack()
 
 def nouvelle_manche(game_over):
-    for widget in racine.winfo_children(): #supprime tout les widgets
-        widget.destroy()
-    game_over =False
-    
+    """Réinitialise le jeu, démarre une nouvelle partie."""
+    global paquet, mise_utilisateur, game_over, main_joueur, main_croupier
+    paquet_n = list(paquet)
+    rd.shuffle(paquet_n)
 
+    mise_utilisateur = 100
+    game_over = False
+    main_joueur = []
+    main_croupier = []
+
+   # Détruire les widgets de la manche précédente
+    for widget in racine.winfo_children():
+        if widget not in [label_demarrage, bouton_demarrer, bouton_quitter]: # Garder les boutons initiaux
+            widget.destroy()
+
+    # Redémarrer le processus de mise
+    commencer_partie()
+    
 
 #-------Fenetre + boutons--------
 
