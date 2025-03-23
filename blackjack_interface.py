@@ -172,7 +172,7 @@ def verif_blackjack():
         game_over = True
         message(f"Dust ! vous perdez votre mise")
     if game_over == True:
-        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=commencer_partie)
+        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
         bouton_nv_manche.pack()
 
 def message(message):
@@ -181,10 +181,10 @@ def message(message):
     label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
     label_resultat.pack()
 
-def nouvelle_manche(game_over):
+def nouvelle_manche():
     """Réinitialise le jeu, démarre une nouvelle partie."""
-    global paquet, mise_utilisateur, game_over, main_joueur, main_croupier
-    paquet_n = list(paquet)
+    global paquet, mise_utilisateur, main_joueur, main_croupier, game_over
+    paquet_n = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs] # Recréer un paquet complet    rd.shuffle(paquet_n)
     rd.shuffle(paquet_n)
 
     mise_utilisateur = 100
@@ -192,12 +192,10 @@ def nouvelle_manche(game_over):
     main_joueur = []
     main_croupier = []
 
-   # Détruire les widgets de la manche précédente
     for widget in racine.winfo_children():
-        if widget not in [label_demarrage, bouton_demarrer, bouton_quitter]: # Garder les boutons initiaux
+        if widget not in [label_demarrage, bouton_demarrer, bouton_quitter]:
             widget.destroy()
 
-    # Redémarrer le processus de mise
     commencer_partie()
     
 
