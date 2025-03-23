@@ -116,7 +116,7 @@ def quit(event):
 def tirer():
     global main_joueur, game_over, paquet, label_joueur, label_croupier
     """Rajoute une carte au joueur"""
-    if game_over:
+    while valeur(main_joueur) <= 21 and game_over == False:
         main_joueur.extend(carte(paquet, 1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
         if valeur(main_joueur) > 21:
@@ -128,7 +128,7 @@ def tirer():
             verif_blackjack()
         else:
             pass
-    while valeur(main_croupier) <= 17  and not game_over:
+    while valeur(main_croupier) <= 17 and game_over == False:
         main_croupier.extend(carte(paquet, 1))
         label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
         if valeur(main_croupier) > 17:
@@ -194,15 +194,15 @@ racine = tk.Tk()
 racine.title("Blackjack")
 
 label_demarrage = tk.Label(racine, text="Blackjack !", padx=20, pady=20, font = ("helvetica", "30"))
-label_demarrage.pack()
+label_demarrage.grid(row=0, column=0, columnspan=2)
 
-bouton_demarrer= tk.Button(racine, text="Play", font = ("helvetica", "30"), width=50)
+bouton_demarrer= tk.Button(racine, text="Play", font = ("helvetica", "30"), width=20)
 bouton_demarrer.bind("<Button-1>",play)
-bouton_demarrer.pack()
+bouton_demarrer.grid(row=1, column=0)
 
-bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=50)
+bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20)
 bouton_quitter.bind("<Button-1>", quit)
-bouton_quitter.pack()
+bouton_quitter.grid(row=1, column=1)
 
 #------MISE-------
 label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
