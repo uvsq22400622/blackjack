@@ -154,7 +154,7 @@ def tirer():
 def rester():
     """Le joueur ne tire pas et passe son tour"""
     global game_over
-     if not game_over:
+    if not game_over:
         label_reste = tk.Label(racine, text="Le joueur reste.")
         label_reste.pack()
         game_over=True
