@@ -225,15 +225,15 @@ racine = tk.Tk()
 racine.title("Blackjack")
 
 label_demarrage = tk.Label(racine, text="Blackjack !", padx=20, pady=20, font = ("helvetica", "30"))
-label_demarrage.grid(row=0, column=0, columnspan=2)
+label_demarrage.pack()
 
 bouton_demarrer= tk.Button(racine, text="Play", font = ("helvetica", "30"), width=20)
 bouton_demarrer.bind("<Button-1>",play)
-bouton_demarrer.grid(row=1, column=0)
+bouton_demarrer.pack()
 
 bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20)
 bouton_quitter.bind("<Button-1>", quit)
-bouton_quitter.grid(row=1, column=1)
+bouton_quitter.pack()
 
 #------MISE-------
 label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
