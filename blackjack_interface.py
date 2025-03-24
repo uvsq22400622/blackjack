@@ -84,9 +84,6 @@ def mains_joueurs():
     label_croupier = tk.Label(racine, text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
     label_croupier.pack()
     
-    label_choix = tk.Label(racine, text="Voulez-vous tirer ou rester? ")
-    label_choix.pack()
-    
     choix()
 
 def valeur(main:list)->int:
