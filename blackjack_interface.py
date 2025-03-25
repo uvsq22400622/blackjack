@@ -323,6 +323,6 @@ bouton_rester.grid(row=4, column=1)
 
 #----------Nouvelles fonctions, autres pour la note --------
 # multijoueur 
-# demande à l'utilisateur pour l'As
-# graphisme avancée, image
+# gsetion des as, positionnement
+# graphisme avancée, image ( perfectionner l'interface graphique)
 # A FAIRE : LIRE LE CODE ET POSER DES QUESTIONS SI INCROMPREHENSION
