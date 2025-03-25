@@ -83,6 +83,14 @@ def mains_joueurs():
 
     label_croupier = tk.Label(racine, text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
     label_croupier.pack()
+
+    if len(main_joueur) == 2 and main_joueur[0].split(" de ")[0] == main_joueur[1].split(" de ")[0]:
+        label_split = tk.Label(racine, text="Vous choisissez de splitter votre main.")
+        label_split.pack()
+        bouton_split = tk.Button(racine, text="Split", command=partie_split)
+        bouton_split.pack()
+    else:
+        message("Vous ne pouvez pas splitter cette main.")
     
     choix()
 
@@ -116,7 +124,7 @@ bouton_tirer = None
 bouton_rester = None
 
 def choix():
-    global label_choix, bouton_tirer, bouton_rester
+    global label_choix, bouton_tirer, bouton_rester, main_joueur
 
     if label_choix:
         label_choix.pack_forget()
@@ -134,6 +142,7 @@ def choix():
     bouton_rester = tk.Button(racine, text="Rester", command=rester)
     bouton_rester.pack()
 
+    
 def tirer():
     global main_joueur, game_over, paquet, label_joueur
     """Rajoute une carte au joueur"""
@@ -215,7 +224,48 @@ def nouvelle_manche():
 
     commencer_partie()
     
+#-------Règles plus complexes----
 
+def splitter(main_joueur, paquet, mise, jeton):
+    """Permet de splitter la main si les deux cartes initiales sont de même valeur."""        
+    # Création de deux mains séparées.
+    main_split_1 = [main_joueur[0], *carte(paquet, 1)]
+    main_split_2 = [main_joueur[1], *carte(paquet, 1)]
+    print(f"Main 1 : {main_split_1} (Valeur: {valeur(main_split_1)})")
+    print(f"Main 2 : {main_split_2} (Valeur: {valeur(main_split_2)})")
+
+    # Gérer les deux mains séparément (par exemple en utilisant une boucle ou des appels séparés).
+    mise_split = mise  # Mise pour chaque main.
+    jeton_apres_split1 = partie_split(main_split_1, mise_split, jeton, 1)
+    jeton_apres_split2 = partie_split(main_split_2, mise_split, jeton, jetons_apres_split1, 2)
+
+    return jetons_apres_split2 #censé restourner le nombre de jetons après avoir joué les deux mains
+
+def partie_split(main_split, mise_split, jeton):
+    global label_main_split
+    """Joue une main split de manière indépendante."""
+    label_main_split = tk.Label(racine, text=f"Vous jouez une main split : {main_split} (Valeur: {valeur(main_split)})")
+    label_main_split.pack()
+    split_tirer()
+
+def split_tirer():
+    global main_split, jeton, label_main_split
+    """Rajoute une carte au joueur"""
+    if not game_over and valeur(main_joueur)<21:
+        nouvelle_carte = carte(paquet, 1)[0]
+        main_split.append(nouvelle_carte)
+        label_main_split.config(text=f"Nouvelle main : {main_split} (Valeur: {valeur(main_split)})")
+    if valeur(main_joueur)==21:
+        blackjack()
+    elif valeur(main_joueur)>21:
+        game_over= True
+        croupier()
+        resultat()
+    pass
+def split_rester():
+    label_split_rester = tk.Label(racine, text=f"Vous restez avec la main split. (Valeur: {valeur(main_split)}).")
+    label_split_rester.pack()
+    pass
 #-------Fenetre + boutons--------
 
 racine = tk.Tk()
@@ -248,46 +298,6 @@ label_mise_acceptée = tk.Label(racine, text="", fg="green")
 
 racine.mainloop()
 
-#------- Statistique de suivi----------
-
-#label_statistiques = tk.Label(racine, text=f"Manches gagnées : {manches_gagnees}\nManches perdues : {manches_perdues}")
-#label_statistiques.pack()
-#----- Bouton tirer ---------
-
-#def tirer():
-#    global main_joueur, paquet, label_joueur, bouton_tirer, bouton_rester
-#    if not game_over:
-#        main_joueur.extend(carte(paquet, 1))
-#        label_joueur.config(text=f"Votre main : {main_joueur} (Valeur: {valeur(main_joueur)})")
-#        if valeur(main_joueur) >= 21:  # Arrête automatiquement si on dépasse ou atteint 21
-#            bouton_tirer.config(state="disabled")
-#            bouton_rester.config(state="disabled")
-#            verif_blackjack()
-
-# ------- Tableau de bord--------
-
-#label_jetons = tk.Label(racine, text=f"Jetons : {jeton}", font=("Helvetica", 14))
-#label_jetons.grid(row=0, column=0, sticky="w")
-
-# effacer l'historique de jeu sans créer de nouvelle fenetre
-
-def effacer_historique():
-    global main_joueur, main_croupier, label_main_joueur, label_main_croupier, label_resultat
-    
-    # Réinitialisation des mains
-    main_joueur = []
-    main_croupier = []
-    
-    # Réinitialisation des labels
-    label_main_joueur.config(text="Votre main : ")
-    label_main_croupier.config(text="Main du croupier : ")
-    label_resultat.config(text="")
-    
-    # Réactiver les boutons
-    bouton_tirer.config(state="normal")
-    bouton_rester.config(state="normal")
-
-# interface couleur, taille 
 
 # Création des labels pour afficher les mains
 label_main_joueur = tk.Label(racine, text="Votre main : ", font=("Helvetica", 14))
@@ -306,9 +316,6 @@ bouton_tirer.grid(row=4, column=0)
 bouton_rester = tk.Button(racine, text="Rester", command=rester)
 bouton_rester.grid(row=4, column=1)
 
-# Bouton pour réinitialiser le jeu (ne s'affiche pas)
-bouton_reset = tk.Button(racine, text="Réinitialiser", command=effacer_historique)
-bouton_reset.grid(row=5, column=0, columnspan=2)
 
 # à faire qui ne compte pas dans la note
 #interface oppérationnel /
@@ -317,5 +324,5 @@ bouton_reset.grid(row=5, column=0, columnspan=2)
 #----------Nouvelles fonctions, autres pour la note --------
 # multijoueur 
 # demande à l'utilisateur pour l'As
-# historique
+# graphisme avancée, image
 # A FAIRE : LIRE LE CODE ET POSER DES QUESTIONS SI INCROMPREHENSION
