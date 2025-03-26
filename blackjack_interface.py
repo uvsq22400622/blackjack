@@ -23,19 +23,26 @@ def commencer_partie():
     """permet de jouer une partie en misant, renvoie le nombre de jeton à la fin de la partie"""
     global label_jetons, label_mise, entry_mise, bouton_valider, label_erreur, label_mise_acceptée, game_over
 
-    game_over= False
+    if jeton<=0:
+       label_fin_de_jeu=tk.Label(racine, text="Vous n'avez plus de jeton le jeu est terminé", font=("helvetica",14))
+       label_fin_de_jeu.pack()
+       bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
+       bouton_quitter.pack()
 
-    label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
-    label_jetons.pack()
+    else:
+        game_over= False
 
-    label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
-    label_mise.pack()
+        label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+        label_jetons.pack()
 
-    entry_mise = tk.Entry(racine)
-    entry_mise.pack()
+        label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
+        label_mise.pack()
 
-    bouton_valider = tk.Button(racine, text="Valider la mise", command=mise_soumise)
-    bouton_valider.pack()
+        entry_mise = tk.Entry(racine)
+        entry_mise.pack()
+
+        bouton_valider = tk.Button(racine, text="Valider la mise", command=mise_soumise)
+        bouton_valider.pack()
 
 def valider_mise(jeton:int,mise:int)-> str | None:
     """Valide la mise de l'utilisateur."""
@@ -108,14 +115,14 @@ def valeur(main:list)->int:
         nb_as -= 1
     return(valeur)
 
-def play(event):
+def play():
     """Supprime les widgets"""
     label_demarrage.destroy()
     bouton_quitter.destroy()
     bouton_demarrer.destroy()
     commencer_partie()
 
-def quit(event):
+def quit():
     """Ferme la fenêtre principale."""
     racine.destroy()
 
@@ -274,12 +281,10 @@ racine.title("Blackjack")
 label_demarrage = tk.Label(racine, text="Blackjack !", padx=20, pady=20, font = ("helvetica", "30"))
 label_demarrage.pack()
 
-bouton_demarrer= tk.Button(racine, text="Play", font = ("helvetica", "30"), width=20)
-bouton_demarrer.bind("<Button-1>",play)
+bouton_demarrer= tk.Button(racine, text="Play", font = ("helvetica", "30"), width=20, command=play)
 bouton_demarrer.pack()
 
-bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20)
-bouton_quitter.bind("<Button-1>", quit)
+bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
 bouton_quitter.pack()
 
 #------MISE-------
