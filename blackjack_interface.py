@@ -14,6 +14,7 @@ def carte(paquet:list, n:int)->list:
     main = [] #Les cartes générées sont stokées dans une liste.
     for _ in range (n):
         carte = rd.choice(paquet) #La fonction choice permet de faire un choix aléatoire de carte dans le paquet.
+        paquet.remove(carte)
         main.append(carte)
     return main
 
@@ -56,7 +57,13 @@ def valider_mise(jeton:int,mise:int)-> str | None:
 def mise_soumise():
     global mise_utilisateur, jeton, entry_mise, bouton_valider, label_erreur, label_mise_acceptée
     
-    mise = int(entry_mise.get())
+    try:
+        mise = int(entry_mise.get())
+    except ValueError:
+        label_erreur.config(text="Veuillez entrer un nombre valide")
+        label_erreur.pack()
+        return
+    
     message_erreur = valider_mise(jeton, mise)
 
     if message_erreur:
@@ -157,9 +164,8 @@ def tirer():
         main_joueur.extend(carte(paquet, 1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
         choix()
-    if valeur(main_joueur)==21:
-        blackjack()
-    elif valeur(main_joueur)>21:
+    
+    if valeur(main_joueur)>21:
         game_over= True
         croupier()
         resultat()
@@ -168,8 +174,6 @@ def rester():
     """Le joueur ne tire pas et passe son tour"""
     global game_over
     if not game_over:
-        label_reste = tk.Label(racine, text="Le joueur reste.")
-        label_reste.pack()
         game_over=True
     croupier()
     resultat()
@@ -185,8 +189,13 @@ def croupier():
 def blackjack():
     """Execute si blackjack"""
     global jeton
+
     message(f"Blackjack ! Vous gagnez {int(mise_utilisateur * 1.5)} jetons.")
     jeton+=int(mise_utilisateur * 1.5)
+
+    bouton_tirer.pack_forget()
+    bouton_rester.pack_forget()
+
     bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
     bouton_nv_manche.pack()
 
@@ -195,19 +204,22 @@ def resultat():
     global jeton
     if valeur(main_joueur) > 21:
         message(f"Dust ! Vous perdez votre mise")
-        jeton-=mise_utilisateur
+
     elif valeur(main_croupier)>21:
         message(f"Victoire! Vous gagnez {int(mise_utilisateur * 2)} jetons.")
         jeton+=mise_utilisateur
+
     elif valeur(main_croupier)>valeur(main_joueur):
         message(f"Perdu! Vous perdez {mise_utilisateur} jetons.")
-        jeton-=mise_utilisateur
+
     elif valeur(main_joueur)>valeur(main_croupier):
         message(f"Victoire! Vous gagnez {mise_utilisateur * 2} jetons.")
         jeton+=mise_utilisateur
+
     elif valeur(main_joueur)==valeur(main_croupier):
         message("Egalité! Vous récuperez votre mise")
         jeton+=mise_utilisateur
+
     bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
     bouton_nv_manche.pack()
 
@@ -225,6 +237,8 @@ def nouvelle_manche():
     main_joueur=[]
     main_croupier=[]
     mise_utilisateur=0
+
+    paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
 
     for widget in racine.winfo_children(): #supprime tout les widgets
         widget.pack_forget()
