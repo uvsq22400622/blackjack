@@ -364,4 +364,6 @@ bouton_rester.grid(row=4, column=1)
 # multijoueur 
 # gsetion des as, positionnement
 # graphisme avancée, image ( perfectionner l'interface graphique)
+#fonctions : les cotes de la main = strategie qui informe le joueur sur comment jouer la partie
+#           l'assurance : mise secondaire
 # A FAIRE : LIRE LE CODE ET POSER DES QUESTIONS SI INCROMPREHENSION
