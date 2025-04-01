@@ -277,3 +277,20 @@ def split_tirer():
         game_over= True
         croupier()
         resultat()
+
+
+
+
+if len(main_joueur) == 2 and main_joueur[0].split(" de ")[0] == main_joueur[1].split(" de ")[0]:
+        label_split = tk.Label(racine, text="Vous choisissez de splitter votre main.")
+        label_split.pack()
+        bouton_split = tk.Button(racine, text="Split", command=partie_split)
+        bouton_split.pack()
+    else:
+        message("Vous ne pouvez pas splitter cette main.")
+
+    if mise_utilisateur * 2 <= jeton:
+        bouton_doubler = tk.Button(racine, text="Doubler votre mise", command=doubler)
+        bouton_doubler.pack()
+    else:
+        message("Vous n'avez pas assez de jetons pour doubler.")    
