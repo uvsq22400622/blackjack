@@ -169,7 +169,7 @@ def tirer():
         main_joueur.extend(carte(paquet, 1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
         choix()
-    
+        
     if valeur(main_joueur)>21:
         game_over= True
         croupier()
@@ -212,14 +212,14 @@ def resultat():
 
     elif valeur(main_croupier)>21:
         message(f"Victoire! Vous gagnez {int(mise_utilisateur * 2)} jetons.")
-        jeton+=mise_utilisateur
+        jeton+=mise_utilisateur*2
 
     elif valeur(main_croupier)>valeur(main_joueur):
         message(f"Perdu! Vous perdez {mise_utilisateur} jetons.")
 
     elif valeur(main_joueur)>valeur(main_croupier):
         message(f"Victoire! Vous gagnez {mise_utilisateur * 2} jetons.")
-        jeton+=mise_utilisateur
+        jeton+=mise_utilisateur*2
 
     elif valeur(main_joueur)==valeur(main_croupier):
         message("Egalité! Vous récuperez votre mise")
@@ -294,6 +294,7 @@ def split_tirer(main_split, jeton):
     pass
 
 def split_rester():
+    global main_split
     label_split_rester = tk.Label(racine, text=f"Vous restez avec la main split. (Valeur: {valeur(main_split)}).")
     label_split_rester.pack()
     pass
