@@ -50,7 +50,7 @@ def commencer_partie():
             bouton_mise.pack()
             boutons.append(bouton_mise)
 
-        bouton_valider = tk.Button(racine, text="Valider la mise", command=mise_soumise)
+        bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
         bouton_valider.pack()
 
 def ajouter_mise(montant):
@@ -58,47 +58,43 @@ def ajouter_mise(montant):
     mise += montant
     label_mise.config(text=f"Mise actuelle : {mise} €")
 
-def valider_mise(jeton:int,mise:int)-> str | None:
-    global boutons
+def valider_mise():
+    global boutons, jeton, mise
+    #grise boutons_mise
     for bouton_mise in boutons:
         bouton_mise.config(state="disabled")
-    """Valide la mise de l'utilisateur."""
-    if mise > jeton:
-        return "Votre mise est supérieure à votre nombre de jetons disponibles"
-    elif mise <= 0:
-        return "Veuillez entrer une mise positive"
-    else:
-        return None       
-    
-def mise_soumise():
-    global mise_utilisateur, jeton, entry_mise, bouton_valider, label_erreur, label_mise_acceptée, mise
-    
-    try:
-        mise = mise
-    except ValueError:
-        label_erreur.config(text="Veuillez entrer un nombre valide")
-        label_erreur.pack()
-        label_mise
-        return
-    
-    message_erreur = valider_mise(jeton, mise)
 
-    if message_erreur:
-        label_erreur.config(text=message_erreur)
+    if mise < jeton:
+        mise_soumise()
+
+    else:
+        label_erreur = tk.Label(racine, text="Votre mise est supérieure à votre nombre de jetons disponibles")
         label_erreur.pack()
         label_mise_acceptée.pack_forget()
-    else:
-        mise_utilisateur = mise
-        jeton -= mise_utilisateur
-        label_erreur.pack_forget() #cache le message d'erreur
-        label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
-        label_mise_acceptée.config(text=f"Mise acceptée : {mise_utilisateur}")
-        label_mise_acceptée.pack()
-        bouton_valider.config(state="disabled")       
+        mise = 0
+        label_mise.config(text=f"Mise actuelle : {mise} €")
 
-        #fonction pour ditribuer les cartes
-        mains_joueurs()
-        print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")
+
+def mise_soumise():
+    global mise_utilisateur, jeton, bouton_valider , label_mise_acceptée, mise
+
+    mise_utilisateur = mise
+    jeton -= mise_utilisateur
+    label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+    label_mise_acceptée.config(text=f"Mise acceptée : {mise_utilisateur}")
+    label_mise_acceptée.pack()
+    bouton_valider.config(state="disabled")
+    #fonction pour ditribuer les cartes
+    mains_joueurs()
+    print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")    
+
+#message_erreur = valider_mise(jeton, mise)
+
+   # if message_erreur:
+#        label_erreur.config(text=message_erreur)
+#        label_erreur.pack()
+ #       label_mise_acceptée.pack_forget()
+  #  else:
 
 def mains_joueurs():
     global main_joueur, main_croupier, paquet, label_joueur, label_croupier
@@ -261,7 +257,7 @@ def message(message):
 
 def nouvelle_manche():
     """Réinitialise le jeu, démarre une nouvelle partie."""
-    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet
+    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise
 
     game_over =False
     main_joueur=[]
@@ -269,6 +265,7 @@ def nouvelle_manche():
     mise_utilisateur=0
     doubler_mise = False
     paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
+    mise = 0
 
     for widget in racine.winfo_children(): #supprime tout les widgets
         widget.pack_forget()
@@ -304,17 +301,6 @@ bouton_demarrer.pack()
 
 bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
 bouton_quitter.pack()
-
-#------MISE-------
-label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
-
-label_mise = tk.Label(racine, text = "Combien voulez vous miser ? ", font=("helvetica",14))
-   
-entry_mise = tk.Entry(racine)
-   
-bouton_valider = tk.Button(racine, text="Valider la mise", command=mise_soumise)
-
-label_erreur = tk.Label(racine, text="", fg="red")
 
 label_mise_acceptée = tk.Label(racine, text="", fg="green")
 
