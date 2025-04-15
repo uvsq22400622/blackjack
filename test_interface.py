@@ -7,7 +7,7 @@ racine.title("Blackjack")
 racine.geometry('360x450')
 racine.configure(bg = "darkgreen")
 
-frame_cadre_rouge = tk.Frame(racine, bg="red", bd=2, padx=10, pady=10)
+frame_cadre_rouge = tk.Frame(racine, bg="black", bd=2, padx=10, pady=10)
 frame_cadre_rouge.pack(padx=20, pady=(20,10))
 
 label_demarrage = tk.Label(frame_cadre_rouge, text="Blackjack", padx=20, pady=20, font = ("Courier", "30", "bold"), bg="darkgreen", fg="white")

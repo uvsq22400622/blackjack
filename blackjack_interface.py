@@ -217,7 +217,8 @@ def resultat():
     global jeton
     if valeur(main_joueur) > 21:
         message(f"Dust ! Vous perdez votre mise")
-
+        jeton-=mise_utilisateur
+        
     elif valeur(main_croupier)>21:
         message(f"Victoire! Vous gagnez {mise_utilisateur} jetons.")
         jeton+=mise_utilisateur
