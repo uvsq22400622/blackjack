@@ -260,53 +260,7 @@ def nouvelle_manche():
     
 #-------Règles plus complexes----
 
-def splitter(main_joueur, paquet, jeton):
-    global jeton_apres_split1, mains_joueur
-    """Permet de splitter la main si les deux cartes initiales sont de même valeur."""        
-    # Création de deux mains séparées.
-    main_split_1 = [main_joueur[0], *carte(paquet, 1)]
-    main_split_2 = [main_joueur[1], *carte(paquet, 1)]
-    mains_joueur = [main_split_1, main_split_2]
-    print(f"Main 1 : {main_split_1} (Valeur: {valeur(main_split_1)})")
-    print(f"Main 2 : {main_split_2} (Valeur: {valeur(main_split_2)})")
-    
-    # Gérer les deux mains séparément
-    jeton_apres_split1 = partie_split(main_split_1, mise_utilisateur, jeton, 1)
-    jeton_apres_split2 = partie_split(main_split_2, mise_utilisateur, jeton, jeton_apres_split1)
 
-    return jeton_apres_split2 #censé restourner le nombre de jetons après avoir joué les deux mains
-
-
-#def partie_split(main_split, jeton):
-    global label_main_split
-    """Joue une main split de manière indépendante."""
-    label_main_split = tk.Label(racine, text=f"Vous jouez une main split : {main_split} (Valeur: {valeur(main_split)})")
-    label_main_split.pack()
-
-    jeton_apres_split = split_tirer(main_split, jeton)
-    print(f'jetons après split: {jeton_apres_split}')
-    return jeton_apres_split
-
-#def split_tirer(main_split, jeton):
-    global label_main_split, game_over
-    """Rajoute une carte au joueur"""
-    if not game_over and valeur(main_joueur)<21:
-        nouvelle_carte = carte(paquet, 1)[0]
-        main_split.append(nouvelle_carte)
-        label_main_split.config(text=f"Nouvelle main : {main_split} (Valeur: {valeur(main_split)})")
-    if valeur(main_joueur)==21:
-        blackjack()
-    elif valeur(main_joueur)>21:
-        game_over= True
-        croupier()
-        resultat()
-    pass
-
-#def split_rester():
-    global main_split
-    label_split_rester = tk.Label(racine, text=f"Vous restez avec la main split. (Valeur: {valeur(main_split)}).")
-    label_split_rester.pack()
-    pass
 
 #-------Doubler la mise----------
 

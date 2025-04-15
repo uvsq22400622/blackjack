@@ -241,43 +241,53 @@ racine.mainloop()
 #    bouton_rester.config(state="disabled")
 
 
-def splitter(main_joueur, paquet, mise, jeton):
+def splitter(main_joueur, paquet, jeton):
+    global jeton_apres_split1, mains_joueur
     """Permet de splitter la main si les deux cartes initiales sont de même valeur."""        
     # Création de deux mains séparées.
     main_split_1 = [main_joueur[0], *carte(paquet, 1)]
     main_split_2 = [main_joueur[1], *carte(paquet, 1)]
+    mains_joueur = [main_split_1, main_split_2]
     print(f"Main 1 : {main_split_1} (Valeur: {valeur(main_split_1)})")
     print(f"Main 2 : {main_split_2} (Valeur: {valeur(main_split_2)})")
+    
+    # Gérer les deux mains séparément
+    jeton_apres_split1 = partie_split(main_split_1, mise_utilisateur, jeton, 1)
+    jeton_apres_split2 = partie_split(main_split_2, mise_utilisateur, jeton, jeton_apres_split1)
 
-    # Gérer les deux mains séparément (par exemple en utilisant une boucle ou des appels séparés).
-    mise_split = mise  # Mise pour chaque main.
-    jeton = partie_split(main_split_1, mise_split, jeton)
-    jeton = partie_split(main_split_2, mise_split, jeton)
+    return jeton_apres_split2 #censé restourner le nombre de jetons après avoir joué les deux mains
 
-    return jeton
 
-def partie_split(main_split, mise_split, jeton):
+#def partie_split(main_split, jeton):
+    global label_main_split
     """Joue une main split de manière indépendante."""
     label_main_split = tk.Label(racine, text=f"Vous jouez une main split : {main_split} (Valeur: {valeur(main_split)})")
     label_main_split.pack()
-    label_joueur_split = tk.Label(racine, text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
-    label_joueur_split.pack_forget()
-    split_tirer()
 
-def split_tirer():
-    global main_joueur, game_over, paquet, label_joueur_split, main_split
+    jeton_apres_split = split_tirer(main_split, jeton)
+    print(f'jetons après split: {jeton_apres_split}')
+    return jeton_apres_split
+
+#def split_tirer(main_split, jeton):
+    global label_main_split, game_over
     """Rajoute une carte au joueur"""
     if not game_over and valeur(main_joueur)<21:
-        main_joueur.extend(carte(paquet, 1))
-        label_joueur_split.config(text=f"Nouvelle main : {main_split} (Valeur: {valeur(main_split)})")
-        choix()
+        nouvelle_carte = carte(paquet, 1)[0]
+        main_split.append(nouvelle_carte)
+        label_main_split.config(text=f"Nouvelle main : {main_split} (Valeur: {valeur(main_split)})")
     if valeur(main_joueur)==21:
         blackjack()
     elif valeur(main_joueur)>21:
         game_over= True
         croupier()
         resultat()
+    pass
 
+#def split_rester():
+    global main_split
+    label_split_rester = tk.Label(racine, text=f"Vous restez avec la main split. (Valeur: {valeur(main_split)}).")
+    label_split_rester.pack()
+    pass
 
 
 
