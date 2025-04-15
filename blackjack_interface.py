@@ -261,9 +261,21 @@ def resultat():
 
 def message(message):
     """Affiche le résultat de la manche et désactive les boutons d'action."""
-    global label_resultat
+    global label_resultat, bouton_tirer, bouton_rester, bouton_split, bouton_doubler, bouton_abandonner
+
     label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
     label_resultat.pack()
+
+    if bouton_tirer:
+        bouton_tirer.config(state="disabled")
+    if bouton_rester:
+        bouton_rester.config(state="disabled")
+    if bouton_split:
+        bouton_split.config(state="disabled")
+    if bouton_doubler:
+        bouton_doubler.config(state="disabled")
+    if bouton_abandonner:
+        bouton_abandonner.config(state="disabled")
 
 def nouvelle_manche():
     """Réinitialise le jeu, démarre une nouvelle partie."""
