@@ -3,12 +3,15 @@ import random as rd
 
 # --------- Paquet de cartes ----------
 rangs={"As":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Valet":10, "Dame":10, "Roi":10}
-couleurs=["Coeur", "Trèfle", "Carreau", "Pique"]
+couleurs=['♠', '♥', '♦', '♣']
 paquet=[f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
 mise_utilisateur = 0
 jeton = 100
 game_over =False
 doubler_mise = False
+mise = 0
+#liste des boutons_mise:
+boutons = []
 
 def carte(paquet:list, n:int)->list:
     """génère un nombre n de cartes du paquet"""
@@ -40,13 +43,25 @@ def commencer_partie():
         label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
         label_mise.pack()
 
-        entry_mise = tk.Entry(racine)
-        entry_mise.pack()
+        valeurs_mise= [1,5,10,25,50,100]
+
+        for val in valeurs_mise:
+            bouton_mise = tk.Button(racine, text=f"Miser {val} €", font=("Arial", 10),command=lambda v=val: ajouter_mise(v))
+            bouton_mise.pack()
+            boutons.append(bouton_mise)
 
         bouton_valider = tk.Button(racine, text="Valider la mise", command=mise_soumise)
         bouton_valider.pack()
 
+def ajouter_mise(montant):
+    global mise
+    mise += montant
+    label_mise.config(text=f"Mise actuelle : {mise} €")
+
 def valider_mise(jeton:int,mise:int)-> str | None:
+    global boutons
+    for bouton_mise in boutons:
+        bouton_mise.config(state="disabled")
     """Valide la mise de l'utilisateur."""
     if mise > jeton:
         return "Votre mise est supérieure à votre nombre de jetons disponibles"
@@ -54,15 +69,16 @@ def valider_mise(jeton:int,mise:int)-> str | None:
         return "Veuillez entrer une mise positive"
     else:
         return None       
-
+    
 def mise_soumise():
-    global mise_utilisateur, jeton, entry_mise, bouton_valider, label_erreur, label_mise_acceptée
+    global mise_utilisateur, jeton, entry_mise, bouton_valider, label_erreur, label_mise_acceptée, mise
     
     try:
-        mise = int(entry_mise.get())
+        mise = mise
     except ValueError:
         label_erreur.config(text="Veuillez entrer un nombre valide")
         label_erreur.pack()
+        label_mise
         return
     
     message_erreur = valider_mise(jeton, mise)
@@ -78,8 +94,8 @@ def mise_soumise():
         label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
         label_mise_acceptée.config(text=f"Mise acceptée : {mise_utilisateur}")
         label_mise_acceptée.pack()
-        entry_mise.destroy()
-        bouton_valider.destroy()
+        bouton_valider.config(state="disabled")       
+
         #fonction pour ditribuer les cartes
         mains_joueurs()
         print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")
@@ -278,6 +294,7 @@ def doubler():
 
 racine = tk.Tk()
 racine.title("Blackjack")
+racine.geometry('450x250')
 
 label_demarrage = tk.Label(racine, text="Blackjack !", padx=20, pady=20, font = ("helvetica", "30"))
 label_demarrage.pack()
