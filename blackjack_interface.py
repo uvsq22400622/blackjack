@@ -303,7 +303,7 @@ def doubler():
 
 racine = tk.Tk()
 racine.title("Blackjack")
-racine.geometry('450x250')
+racine.geometry('500x500')
 
 label_demarrage = tk.Label(racine, text="Blackjack !", padx=20, pady=20, font = ("helvetica", "30"))
 label_demarrage.pack()

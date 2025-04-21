@@ -10,8 +10,16 @@ mise_utilisateur = 0
 jeton = 100
 game_over = False
 doubler_mise = False
+abandon=False
 mise = 0
 boutons = []
+
+label_choix = None
+bouton_tirer = None
+bouton_rester = None
+bouton_split = None
+bouton_doubler = None
+bouton_abandonner = None
 
 def carte(paquet: list, n: int) -> list:
     main = []
@@ -27,6 +35,8 @@ def quit():
 def play():
     frame_cadre_gris.grid_forget()
     frame_boutons.grid_forget()
+    label_credits.grid_forget()
+    label_decoration.grid_forget()
     commencer_partie()
 
 def commencer_partie():
@@ -41,7 +51,7 @@ def commencer_partie():
 
     # Cadre principal de la partie
     cadre_mise = tk.Frame(racine, bg="gray22", bd=2, padx=10, pady=10)
-    cadre_mise.grid(row=1, column=0, columnspan=2, pady=(20, 10), sticky="n")
+    cadre_mise.grid(row=1, column=2, columnspan=2, pady=(20, 10), sticky="n")
 
     label_jetons = tk.Label(cadre_mise, text=f"Vous avez {jeton} jetons.", font=("helvetica", 14), fg="white", bg="gray22")
     label_jetons.grid(row=0, column=0, columnspan=3, pady=5)
@@ -59,18 +69,242 @@ def commencer_partie():
     bouton_valider = tk.Button(cadre_mise, text="Valider la mise", font=("Arial", 12), command=valider_mise)
     bouton_valider.grid(row=4, column=0, columnspan=3, pady=10)
 
-def ajouter_mise(val):
+def ajouter_mise(montant):
     global mise
-    mise += val
-    print(f"Mise actuelle : {mise} €") 
+    mise += montant
+    label_mise.config(text=f"Mise actuelle : {mise} €")
 
 def valider_mise():
-    print("Mise validée :", mise) 
+   global boutons, jeton, mise
+   #grise boutons_mise
+   for bouton_mise in boutons:
+       bouton_mise.config(state="disabled")
+   if mise <= jeton:
+       mise_soumise()
+   else:
+       mise = 0
+       label_mise.config(text=f"Mise actuelle : {mise} €")
+
+def mise_soumise():
+    global mise_utilisateur, jeton, bouton_valider , label_mise, mise
+
+    mise_utilisateur = mise
+    jeton -= mise_utilisateur
+    label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+    label_mise.config(text=f"Mise acceptée : {mise_utilisateur}")
+    bouton_valider.config(state="disabled")
+    #fonction pour ditribuer les cartes
+    mains_joueurs()
+    print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")   
+
+def mains_joueurs():
+    global main_joueur, main_croupier, paquet, label_joueur, label_croupier, cadre_joueurs
+ 
+    main_joueur=carte(paquet,2) #Création de la main initiale du joueur.
+    main_croupier=carte(paquet,1) #Création de la main initiale du croupier.
+
+    if valeur(main_joueur)==21:
+        blackjack()
+
+
+    cadre_croupier = tk.Frame(racine,bg="gray22", bd=2, padx=10, pady=10)
+    cadre_croupier.grid(row=1, column=0, columnspan=2)
+    
+    label_croupier = tk.Label(cadre_croupier, text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})",bg="gray22",
+                              fg="white")
+    label_croupier.grid(row=2, column=0)
+
+    cadre_joueurs = tk.Frame(racine, bg="gray22", bd=2, padx=10, pady=10)
+    cadre_joueurs.grid(row=2,column=0,columnspan=2)
+
+    label_joueur = tk.Label(cadre_joueurs, text=f"Votre main : {main_joueur}, (Valeur: {valeur(main_joueur)})",bg="gray22",fg="white")
+    label_joueur.grid(row=1, column=0)
+
+    choix()
+
+def valeur(main:list)->int:
+    """renvoie la valeur des cartes dans une main"""
+    valeur = 0
+    nb_as = 0 #La valeur des as est gérée de telle sorte que lorsque la valeur de la main dépasse 21 les as comptent 1.
+    for carte in main:
+        rang = carte.split(" de ")[0] #Permet de stocker dans la variable uniquement le rang de la carte, soit la clé dans le dictionnaire rangs.
+        valeur += rangs[rang]
+        if rang == "As":
+            nb_as += 1
+    while valeur > 21 and nb_as != 0:
+        valeur -= 10
+        nb_as -= 1
+    return(valeur)
+
+def choix():
+    global label_choix, bouton_tirer, bouton_rester, main_joueur, mise_utilisateur, jeton, bouton_doubler, bouton_split,bouton_abandonner
+
+    if label_choix:
+        label_choix.grid_forget()
+    if bouton_tirer:
+        bouton_tirer.grid_forget()
+    if bouton_rester:
+        bouton_rester.grid_forget()
+    if bouton_doubler:
+        bouton_doubler.grid_forget()
+    if bouton_split:
+        bouton_split.grid_forget()
+    if bouton_abandonner:
+        bouton_abandonner.grid_forget()
+
+    label_choix = tk.Label(cadre_joueurs, text="Voulez-vous tirer ou rester? ")
+    label_choix.grid(row=3, column=0)
+
+    bouton_tirer = tk.Button(racine, text="Tirer", command=tirer)
+    bouton_tirer.grid(row=3,column=1)
+
+    bouton_rester = tk.Button(racine, text="Rester", command=rester)
+    bouton_rester.grid(row=3, column=0)
+
+    bouton_abandonner = tk.Button(racine, text="Abandonner", command=abandonner)
+    bouton_abandonner.grid(row=4,column=0)
+
+    if len(main_joueur) == 2 and main_joueur[0].split(" de ")[0] == main_joueur[1].split(" de ")[0]:
+        bouton_split = tk.Button(racine, text="Split", command=partie_split)
+        bouton_split.grid(row=5,column=0)
+
+    if mise_utilisateur * 2 <= jeton:
+        bouton_doubler = tk.Button(racine, text="Doubler votre mise", command=doubler)
+        bouton_doubler.grid(row=5, column=1) 
+
+
+def tirer():
+    global main_joueur, game_over, paquet, label_joueur
+    """Rajoute une carte au joueur"""
+    if doubler:
+        main_joueur.extend(carte(paquet, 1))
+        label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
+        game_over = True
+        croupier()
+        resultat()
+
+    elif not game_over and not valeur(main_joueur)>21:
+        main_joueur.extend(carte(paquet, 1))
+        label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
+        choix()
+
+    elif valeur(main_joueur)>21:
+        game_over= True
+        croupier()
+        resultat()
+
+def rester():
+    """Le joueur ne tire pas et passe son tour"""
+    global game_over
+    if not game_over:
+        game_over=True
+    croupier()
+    resultat()
+
+def croupier():
+    """Définie le tour de jeu du croupier"""
+    global game_over
+    while valeur(main_croupier) < 17:
+        main_croupier.extend(carte(paquet, 1))
+        label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+    game_over = True
+
+def blackjack():
+    """Execute si blackjack"""
+    global jeton
+
+    message(f"Blackjack ! Vous gagnez {int(mise_utilisateur * 1.5)} jetons.")
+    jeton+=int(mise_utilisateur * 1.5)
+
+    bouton_tirer.grid_forget()
+    bouton_rester.grid_forget()
+
+    bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
+    bouton_nv_manche.grid(row=8,column=0,columnspan=3)
+
+def resultat():
+    """Renvoie les résultats du tour de jeu"""
+    global jeton, abandon
+
+    if abandon:
+        message(f"Vous abandonnez, vous perdez la moitié de votre mise.")
+        jeton+=mise_utilisateur // 2
+
+    if valeur(main_joueur) > 21:
+        message(f"Dust ! Vous perdez votre mise")
+        jeton-=mise_utilisateur
+
+    elif valeur(main_croupier)>21:
+        message(f"Victoire! Vous gagnez {mise_utilisateur} jetons.")
+        jeton+=mise_utilisateur
+
+    elif valeur(main_croupier)>valeur(main_joueur):
+        message(f"Perdu! Vous perdez {mise_utilisateur} jetons.")
+
+    elif valeur(main_joueur)>valeur(main_croupier):
+        message(f"Victoire! Vous gagnez {mise_utilisateur} jetons.")
+        jeton+=mise_utilisateur
+
+    elif valeur(main_joueur)==valeur(main_croupier):
+        message("Egalité! Vous récuperez votre mise")
+        jeton+=mise_utilisateur
+
+    bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
+    bouton_nv_manche.grid(row=8,column=0,columnspan=3)
+
+def message(message):
+    """Affiche le résultat de la manche et désactive les boutons d'action."""
+    global label_resultat
+    label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
+    label_resultat.grid(row=0,column=0,columnspan=4)
+
+    if bouton_tirer:
+        bouton_tirer.config(state="disabled")
+    if bouton_rester:
+        bouton_rester.config(state="disabled")
+    if bouton_split:
+        bouton_split.config(state="disabled")
+    if bouton_doubler:
+        bouton_doubler.config(state="disabled")
+    if bouton_abandonner:
+        bouton_abandonner.config(state="disabled")
+
+def nouvelle_manche():
+    """Réinitialise le jeu, démarre une nouvelle partie."""
+    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise
+
+    game_over =False
+    main_joueur=[]
+    main_croupier=[]
+    mise_utilisateur=0
+    doubler_mise = False
+    paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
+    mise = 0
+    for widget in racine.winfo_children(): #supprime tout les widgets
+        widget.pack_forget()
+
+    commencer_partie()
+
+def abandonner():
+    global abandon, game_over
+    abandon=True
+    game_over=True
+    resultat()
+
+
+def doubler():
+    global mise_utilisateur, jeton, doubler_mise
+    doubler_mise = True
+    mise_utilisateur *= 2
+    label_mise.config(text=f"Votre mise est maintenant de {mise_utilisateur}.")
+    label_jetons.config(text=f"Vous avez {jeton-mise_utilisateur} jetons.")
+    tirer()
+
 
 # ------- Fenêtre principale -------
 racine = tk.Tk()
 racine.title("Blackjack")
-racine.geometry('600x600')
+racine.geometry('700x500')
 racine.configure(bg="aquamarine4")
 
 # Ligne 0 : Titre
@@ -81,13 +315,16 @@ label_demarrage = tk.Label(frame_cadre_gris, text="Blackjack", padx=20, pady=20,
     bg="snow4",fg="white")
 label_demarrage.grid(row=0, column=0)
 
+label_decoration = tk.Label(racine, bg="aquamarine4", text="♠ ♥ ♦ ♣", fg="gray22",font = ("Courier", "30", "bold"))
+label_decoration.grid(row=1,column=0,columnspan=2)
+
 # artificielle
 racine.grid_columnconfigure(0, weight=1)
 racine.grid_columnconfigure(1, weight=1)
 
 # Ligne 1 : Boutons "Play" et "Quit"
 frame_boutons = tk.Frame(racine, bg="aquamarine4")
-frame_boutons.grid(row=1, column=0, columnspan=2)
+frame_boutons.grid(row=2, column=0, columnspan=2)
 
 bouton_demarrer = tk.Button(frame_boutons, text="Play", font=("Arial", 20, "bold"), width=20, fg="white", bg="gray22", command=play)
 bouton_demarrer.grid(row=0, column=0, padx=10, pady=5)
@@ -97,6 +334,6 @@ bouton_quitter.grid(row=1, column=0, padx=10, pady=5)
 
 # Ligne 2 : Crédits
 label_credits = tk.Label(racine, text="Sophie, Laura, Fanilo, Yacine", font=("Arial", 10), bg="aquamarine4", fg="white")
-label_credits.grid(row=2, column=0, columnspan=2, pady=20)
+label_credits.grid(row=3, column=0, columnspan=2, pady=20)
 
 racine.mainloop()
