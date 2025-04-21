@@ -41,7 +41,7 @@ def commencer_partie():
         label_jetons.pack()
 
         label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
-        label_mise.pack()
+        label_mise.pack(side=tk.RIGHT, expand=False)
 
         valeurs_mise= [1,5,10,25,50,100]
 
@@ -87,14 +87,6 @@ def mise_soumise():
     #fonction pour ditribuer les cartes
     mains_joueurs()
     print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")    
-
-#message_erreur = valider_mise(jeton, mise)
-
-   # if message_erreur:
-#        label_erreur.config(text=message_erreur)
-#        label_erreur.pack()
- #       label_mise_acceptée.pack_forget()
-  #  else:
 
 def mains_joueurs():
     global main_joueur, main_croupier, paquet, label_joueur, label_croupier
