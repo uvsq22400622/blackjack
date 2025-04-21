@@ -1,6 +1,6 @@
 import tkinter as tk
 import random as rd
-
+ 
 # --------- Paquet de cartes ----------
 rangs={"As":11, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Valet":10, "Dame":10, "Roi":10}
 couleurs=['♠', '♥', '♦', '♣']
@@ -9,9 +9,17 @@ mise_utilisateur = 0
 jeton = 100
 game_over =False
 doubler_mise = False
+abandon = False
 mise = 0
 #liste des boutons_mise:
 boutons = []
+label_choix = None
+bouton_tirer = None
+bouton_rester = None
+bouton_split = None
+bouton_doubler = None
+bouton_abandonner = None
+
 
 def carte(paquet:list, n:int)->list:
     """génère un nombre n de cartes du paquet"""
@@ -21,58 +29,52 @@ def carte(paquet:list, n:int)->list:
         paquet.remove(carte)
         main.append(carte)
     return main
-
+ 
 # --------- Déroulement de la partie ---------
-
+ 
 def commencer_partie():
-    """permet de jouer une partie en misant, renvoie le nombre de jeton à la fin de la partie"""
-    global label_jetons, label_mise, entry_mise, bouton_valider, label_erreur, label_mise_acceptée, game_over
+   """permet de jouer une partie en misant, renvoie le nombre de jeton à la fin de la partie"""
+   global label_jetons, label_mise, entry_mise, bouton_valider, label_erreur, label_mise_acceptée, game_over
 
-    if jeton<=0:
-       label_fin_de_jeu=tk.Label(racine, text="Vous n'avez plus de jeton le jeu est terminé", font=("helvetica",14))
-       label_fin_de_jeu.pack()
-       bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
-       bouton_quitter.pack()
+   if jeton<=0:
+      label_fin_de_jeu=tk.Label(racine, text="Vous n'avez plus de jeton le jeu est terminé", font=("helvetica",14))
+      label_fin_de_jeu.pack()
+      bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
+      bouton_quitter.pack()
 
-    else:
-        game_over= False
+   else:
+       game_over= False
 
-        label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
-        label_jetons.pack()
+       label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+       label_jetons.pack()
 
-        label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
-        label_mise.pack(side=tk.RIGHT, expand=False)
+       label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
+       label_mise.pack()
 
-        valeurs_mise= [1,5,10,25,50,100]
+       valeurs_mise= [1,5,10,25,50,100]
 
-        for val in valeurs_mise:
-            bouton_mise = tk.Button(racine, text=f"Miser {val} €", font=("Arial", 10),command=lambda v=val: ajouter_mise(v))
-            bouton_mise.pack()
-            boutons.append(bouton_mise)
+       for val in valeurs_mise:
+           bouton_mise = tk.Button(racine, text=f"Miser {val} €", font=("Arial", 10),command=lambda v=val: ajouter_mise(v))
+           bouton_mise.pack()
+           boutons.append(bouton_mise)
 
-        bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
-        bouton_valider.pack()
+       bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
+       bouton_valider.pack()
 
 def ajouter_mise(montant):
     global mise
     mise += montant
     label_mise.config(text=f"Mise actuelle : {mise} €")
-
 def valider_mise():
-    global boutons, jeton, mise
-    #grise boutons_mise
-    for bouton_mise in boutons:
-        bouton_mise.config(state="disabled")
-
-    if mise < jeton:
-        mise_soumise()
-
-    else:
-        label_erreur = tk.Label(racine, text="Votre mise est supérieure à votre nombre de jetons disponibles")
-        label_erreur.pack()
-        label_mise_acceptée.pack_forget()
-        mise = 0
-        label_mise.config(text=f"Mise actuelle : {mise} €")
+   global boutons, jeton, mise
+   #grise boutons_mise
+   for bouton_mise in boutons:
+       bouton_mise.config(state="disabled")
+   if mise <= jeton:
+       mise_soumise()
+   else:
+       mise = 0
+       label_mise.config(text=f"Mise actuelle : {mise} €")
 
 
 def mise_soumise():
@@ -90,10 +92,10 @@ def mise_soumise():
 
 def mains_joueurs():
     global main_joueur, main_croupier, paquet, label_joueur, label_croupier
-
+ 
     main_joueur=carte(paquet,2) #Création de la main initiale du joueur.
     main_croupier=carte(paquet,1) #Création de la main initiale du croupier.
-    
+
     if valeur(main_joueur)==21:
         blackjack()
 
@@ -130,15 +132,9 @@ def quit():
     """Ferme la fenêtre principale."""
     racine.destroy()
 
-label_choix = None
-bouton_tirer = None
-bouton_rester = None
-bouton_split = None
-bouton_doubler = None
-
 def choix():
-    global label_choix, bouton_tirer, bouton_rester, main_joueur, mise_utilisateur, jeton, bouton_doubler, bouton_split, bouton_abandonner
-    
+    global label_choix, bouton_tirer, bouton_rester, main_joueur, mise_utilisateur, jeton, bouton_doubler, bouton_split,bouton_abandonner
+
     if label_choix:
         label_choix.pack_forget()
     if bouton_tirer:
@@ -151,18 +147,18 @@ def choix():
         bouton_split.pack_forget()
     if bouton_abandonner:
         bouton_abandonner.pack_forget()
-    
+
     label_choix = tk.Label(racine, text="Voulez-vous tirer ou rester? ")
     label_choix.pack()
-    
+
     bouton_tirer = tk.Button(racine, text="Tirer", command=tirer)
     bouton_tirer.pack()
 
-    bouton_abandonner = tk.Button(racine, text="Abandonner", command=abandonner)
-    bouton_abandonner.pack()
-
     bouton_rester = tk.Button(racine, text="Rester", command=rester)
     bouton_rester.pack()
+
+    bouton_abandonner = tk.Button(racine, text="Abandonner", command=abandonner)
+    bouton_abandonner.pack()
 
     if len(main_joueur) == 2 and main_joueur[0].split(" de ")[0] == main_joueur[1].split(" de ")[0]:
         bouton_split = tk.Button(racine, text="Split", command=partie_split)
@@ -186,7 +182,7 @@ def tirer():
         main_joueur.extend(carte(paquet, 1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
         choix()
-    
+
     elif valeur(main_joueur)>21:
         game_over= True
         croupier()
@@ -229,10 +225,10 @@ def resultat():
         message(f"Vous abandonnez, vous perdez la moitié de votre mise.")
         jeton+=mise_utilisateur // 2
 
-    elif valeur(main_joueur) > 21:
+    if valeur(main_joueur) > 21:
         message(f"Dust ! Vous perdez votre mise")
         jeton-=mise_utilisateur
-        
+
     elif valeur(main_croupier)>21:
         message(f"Victoire! Vous gagnez {mise_utilisateur} jetons.")
         jeton+=mise_utilisateur
@@ -253,8 +249,7 @@ def resultat():
 
 def message(message):
     """Affiche le résultat de la manche et désactive les boutons d'action."""
-    global label_resultat, bouton_tirer, bouton_rester, bouton_split, bouton_doubler, bouton_abandonner
-
+    global label_resultat
     label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
     label_resultat.pack()
 
@@ -271,31 +266,27 @@ def message(message):
 
 def nouvelle_manche():
     """Réinitialise le jeu, démarre une nouvelle partie."""
-    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise, abandon
+    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise
 
     game_over =False
     main_joueur=[]
     main_croupier=[]
     mise_utilisateur=0
     doubler_mise = False
-    abandon = False 
     paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
     mise = 0
-
     for widget in racine.winfo_children(): #supprime tout les widgets
         widget.pack_forget()
 
     commencer_partie()
-    
-#-------Règles plus complexes----
-
-#-------Abandonner---------------
 
 def abandonner():
     global abandon, game_over
     abandon=True
     game_over=True
     resultat()
+
+
 
 #-------Doubler la mise----------
 
@@ -323,6 +314,7 @@ bouton_demarrer.pack()
 bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
 bouton_quitter.pack()
 
+
 label_mise_acceptée = tk.Label(racine, text="", fg="green")
 
 
@@ -346,15 +338,14 @@ bouton_tirer.grid(row=4, column=0)
 bouton_rester = tk.Button(racine, text="Rester", command=rester)
 bouton_rester.grid(row=4, column=1)
 
-
-# à faire qui ne compte pas dans la note
-#interface oppérationnel /
-#ajout des nouvelles fonctions + bouttons
-
-#----------Nouvelles fonctions, autres pour la note --------
-# multijoueur 
-# gsetion des as, positionnement
-# graphisme avancée, image ( perfectionner l'interface graphique)
-#fonctions : les cotes de la main = strategie qui informe le joueur sur comment jouer la partie
-#           l'assurance : mise secondaire
-# A FAIRE : LIRE LE CODE ET POSER DES QUESTIONS SI INCROMPREHENSION
+ 
+ # à faire qui ne compte pas dans la note
+ #interface oppérationnel /
+ #ajout des nouvelles fonctions + bouttons
+ 
+ #----------Nouvelles fonctions, autres pour la note --------
+ # multijoueur 
+ # gsetion des as, positionnement
+ # graphisme avancée, image ( perfectionner l'interface graphique)
+ #fonctions : les cotes de la main = strategie qui informe le joueur sur comment jouer la partie
+ #           l'assurance : mise secondaire
