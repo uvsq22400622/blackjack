@@ -137,7 +137,7 @@ bouton_split = None
 bouton_doubler = None
 
 def choix():
-    global label_choix, bouton_tirer, bouton_rester, main_joueur, mise_utilisateur, jeton, bouton_doubler, bouton_split
+    global label_choix, bouton_tirer, bouton_rester, main_joueur, mise_utilisateur, jeton, bouton_doubler, bouton_split, bouton_abandonner
     
     if label_choix:
         label_choix.pack_forget()
@@ -149,12 +149,17 @@ def choix():
         bouton_doubler.pack_forget()
     if bouton_split:
         bouton_split.pack_forget()
+    if bouton_abandonner:
+        bouton_abandonner.pack_forget()
     
     label_choix = tk.Label(racine, text="Voulez-vous tirer ou rester? ")
     label_choix.pack()
     
     bouton_tirer = tk.Button(racine, text="Tirer", command=tirer)
     bouton_tirer.pack()
+
+    bouton_abandonner = tk.Button(racine, text="Abandonner", command=abandonner)
+    bouton_abandonner.pack()
 
     bouton_rester = tk.Button(racine, text="Rester", command=rester)
     bouton_rester.pack()
@@ -218,8 +223,13 @@ def blackjack():
 
 def resultat():
     """Renvoie les résultats du tour de jeu"""
-    global jeton
-    if valeur(main_joueur) > 21:
+    global jeton, abandon
+
+    if abandon:
+        message(f"Vous abandonnez, vous perdez la moitié de votre mise.")
+        jeton+=mise_utilisateur // 2
+
+    elif valeur(main_joueur) > 21:
         message(f"Dust ! Vous perdez votre mise")
         jeton-=mise_utilisateur
         
@@ -243,19 +253,32 @@ def resultat():
 
 def message(message):
     """Affiche le résultat de la manche et désactive les boutons d'action."""
-    global label_resultat
+    global label_resultat, bouton_tirer, bouton_rester, bouton_split, bouton_doubler, bouton_abandonner
+
     label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
     label_resultat.pack()
 
+    if bouton_tirer:
+        bouton_tirer.config(state="disabled")
+    if bouton_rester:
+        bouton_rester.config(state="disabled")
+    if bouton_split:
+        bouton_split.config(state="disabled")
+    if bouton_doubler:
+        bouton_doubler.config(state="disabled")
+    if bouton_abandonner:
+        bouton_abandonner.config(state="disabled")
+
 def nouvelle_manche():
     """Réinitialise le jeu, démarre une nouvelle partie."""
-    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise
+    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise, abandon
 
     game_over =False
     main_joueur=[]
     main_croupier=[]
     mise_utilisateur=0
     doubler_mise = False
+    abandon = False 
     paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
     mise = 0
 
@@ -266,7 +289,13 @@ def nouvelle_manche():
     
 #-------Règles plus complexes----
 
+#-------Abandonner---------------
 
+def abandonner():
+    global abandon, game_over
+    abandon=True
+    game_over=True
+    resultat()
 
 #-------Doubler la mise----------
 
