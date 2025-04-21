@@ -281,7 +281,7 @@ def nouvelle_manche():
     paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
     mise = 0
     for widget in racine.winfo_children(): #supprime tout les widgets
-        widget.pack_forget()
+        widget.grid_forget()
 
     commencer_partie()
 
