@@ -115,6 +115,17 @@ def mains_joueurs():
 
     choix()
 
+def mains_joueurs():
+    global joueurs, tour_actuel, main_croupier
+    joueur = joueurs[tour_actuel]
+    joueur["main"] = carte(paquet, 2)
+    main_croupier = carte(paquet, 1)
+
+    label_joueur.config(text=f"{joueur['nom']} : {joueur['main']} (Valeur: {valeur(joueur['main'])})")
+    label_croupier.config(text=f"Croupier : {main_croupier} (Valeur: {valeur(main_croupier)})")
+    choix()
+
+
 def valeur(main:list)->int:
     """renvoie la valeur des cartes dans une main"""
     valeur = 0
