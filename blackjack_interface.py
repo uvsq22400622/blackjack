@@ -215,6 +215,10 @@ def rester():
     croupier()
     resultat()
 
+def rester():
+    global tour_actuel
+    joueur_suivant()
+
 def croupier():
     """Définie le tour de jeu du croupier"""
     global game_over
