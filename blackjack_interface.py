@@ -390,6 +390,10 @@ label_mise_acceptée = tk.Label(racine, text="", fg="green")
 
 racine.mainloop()
 
+bouton_multijoueur = tk.Button(racine, text="Mode Multijoueur (2 joueurs)", command=lambda: initialiser_joueurs(2))
+bouton_multijoueur.pack()
+
+
 
 # Création des labels pour afficher les mains
 label_main_joueur = tk.Label(racine, text="Votre main : ", font=("Helvetica", 14))
