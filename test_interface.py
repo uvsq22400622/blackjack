@@ -20,6 +20,7 @@ bouton_rester = None
 bouton_split = None
 bouton_doubler = None
 bouton_abandonner = None
+bouton_nv_manche = None
 
 def carte(paquet: list, n: int) -> list:
     main = []
@@ -116,14 +117,39 @@ def mains_joueurs():
                               fg="white",font=("Arial", 10))
     label_croupier.grid(row=2, column=0, columnspan=2)
 
+    #affichage stylisé de la main du joueur:
     cadre_joueur = tk.Frame(cadre_joueurs, bg="gray22", bd=2, padx=10, pady=10)
     cadre_joueur.grid(row=2,column=0,columnspan=2)
-
-    label_joueur = tk.Label(cadre_joueur, text=f"Votre main : {main_joueur} = ({valeur(main_joueur)})",bg="gray22",
-                            fg="white", font=("Arial", 10))
-    label_joueur.grid(row=1, column=0, columnspan=2)
+    
+    affichage_main_joueur()
 
     choix()
+
+def affichage_main_joueur():
+    global cadre_joueur
+
+    # supression => pas empiler
+    for widget in cadre_joueur.winfo_children():
+        widget.destroy()
+    couleurs_cartes = {"♠": "black", "♣": "black", "♥": "red", "♦": "red"}
+
+    # titre des cartes
+    titre_label = tk.Label(cadre_joueur, text=f"Votre main = ({valeur(main_joueur)})",
+                           bg="gray22", fg="white", font=("Arial", 10))
+    titre_label.grid(row=0, column=0, columnspan=len(main_joueur), pady=(0, 10))
+
+    # Affichage stylisé des cartes
+    for i, carte_txt in enumerate(main_joueur):
+        rang, couleur = carte_txt.split(" de ")
+        symbole = couleur.strip()[0]  # ♠ ♥ ♦ ♣
+        couleur_texte = couleurs_cartes.get(symbole, "black")
+
+        carte_label = tk.Label(cadre_joueur, text=f"{rang}\n{symbole}",
+                               bg="ivory", fg=couleur_texte,
+                               font=("Courier", 10, "bold"),
+                               relief="raised", bd=3,
+                               width=6, height=3)
+        carte_label.grid(row=1, column=i, padx=5)
 
 def valeur(main:list)->int:
     """renvoie la valeur des cartes dans une main"""
@@ -144,16 +170,21 @@ def choix():
 
     if label_choix:
         label_choix.grid_forget()
-    if bouton_tirer:
+    if bouton_tirer and bouton_tirer.winfo_exists(): 
         bouton_tirer.grid_forget()
-    if bouton_rester:
+        bouton_tirer = None
+    if bouton_rester and bouton_rester.winfo_exists():
         bouton_rester.grid_forget()
-    if bouton_doubler:
+        bouton_rester = None
+    if bouton_doubler and bouton_doubler.winfo_exists():
         bouton_doubler.grid_forget()
-    if bouton_split:
+        bouton_doubler = None
+    if bouton_split and bouton_split.winfo_exists():
         bouton_split.grid_forget()
-    if bouton_abandonner:
+        bouton_split = None
+    if bouton_abandonner and bouton_abandonner.winfo_exists():
         bouton_abandonner.grid_forget()
+        bouton_abandonner = None
 
     label_choix = tk.Label(cadre_joueurs, text="Voulez-vous tirer ou rester? ")
     label_choix.grid(row=3, column=0)
@@ -175,20 +206,20 @@ def choix():
         bouton_doubler = tk.Button(cadre_joueur, text="Doubler votre mise", command=doubler)
         bouton_doubler.grid(row=6, column=0) 
 
-
 def tirer():
-    global main_joueur, game_over, paquet, label_joueur
+    global main_joueur, game_over, paquet, doubler_mise
     """Rajoute une carte au joueur"""
-    if doubler:
+    if doubler_mise:
         main_joueur.extend(carte(paquet, 1))
-        label_joueur.config(text=f"Votre main : {main_joueur} = ({valeur(main_joueur)})")
+        affichage_main_joueur()
+        doubler_mise = False
         game_over = True
         croupier()
         resultat()
 
     elif not game_over and not valeur(main_joueur)>21:
         main_joueur.extend(carte(paquet, 1))
-        label_joueur.config(text=f"Votre main : {main_joueur} = ({valeur(main_joueur)})")
+        affichage_main_joueur()
         choix()
 
     elif valeur(main_joueur)>21:
@@ -227,7 +258,7 @@ def blackjack():
 
 def resultat():
     """Renvoie les résultats du tour de jeu"""
-    global jeton, abandon
+    global jeton, abandon, bouton_nv_manche
 
     if abandon:
         message(f"Vous abandonnez, vous perdez la moitié de votre mise.")
@@ -251,9 +282,13 @@ def resultat():
     elif valeur(main_joueur)==valeur(main_croupier):
         message("Egalité! Vous récuperez votre mise")
         jeton+=mise_utilisateur
+#on force l'affichage
+    if not bouton_nv_manche:
+        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
+        bouton_nv_manche.grid(row=8,column=0,columnspan=3)
+    else:
+        bouton_nv_manche.grid(row=8, column=0, columnspan=3)
 
-    bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
-    bouton_nv_manche.grid(row=8,column=0,columnspan=3)
 
 def message(message):
     """Affiche le résultat de la manche et désactive les boutons d'action."""
@@ -277,6 +312,7 @@ def nouvelle_manche():
     global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise
 
     game_over =False
+    abandon = False
     main_joueur=[]
     main_croupier=[]
     mise_utilisateur=0
