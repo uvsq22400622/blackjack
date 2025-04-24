@@ -298,7 +298,54 @@ def doubler():
     label_jetons.config(text=f"Vous avez {jeton-mise_utilisateur} jetons.")
     tirer()
 
+#------- Multijoueur-------------
 
+# Liste des joueurs et gestion des tours
+joueurs = []
+tour_actuel = 0
+
+def initialiser_joueurs(nb_joueurs):
+    """Initialise les joueurs avec 100 jetons chacun."""
+    global joueurs, tour_actuel
+    joueurs = [{"nom": f"Joueur {i+1}", "jetons": 100, "main": [], "mise": 0} for i in range(nb_joueurs)]
+    tour_actuel = 0
+    commencer_tour()
+
+def commencer_tour():
+    """Démarre le tour du joueur actuel."""
+    global tour_actuel
+    joueur = joueurs[tour_actuel]
+    label_joueur_actuel.config(text=f"{joueur['nom']} (Jetons : {joueur['jetons']})")
+    commencer_partie()
+
+def joueur_suivant():
+    """Passe au tour du joueur suivant ou au croupier si tous les joueurs ont joué."""
+    global tour_actuel, joueurs
+    tour_actuel += 1
+    if tour_actuel < len(joueurs):
+        commencer_tour()
+    else:
+        croupier()
+        afficher_resultats()
+
+def afficher_resultats():
+    """Affiche les résultats de la manche pour tous les joueurs."""
+    for joueur in joueurs:
+        valeur_main = valeur(joueur["main"])
+        valeur_croupier = valeur(main_croupier)
+
+        if valeur_main > 21:
+            message(f"{joueur['nom']} a dépassé 21. Perdu.")
+        elif valeur_croupier > 21 or valeur_main > valeur_croupier:
+            joueur["jetons"] += joueur["mise"] * 2
+            message(f"{joueur['nom']} a gagné {joueur['mise']} jetons.")
+        elif valeur_main == valeur_croupier:
+            joueur["jetons"] += joueur["mise"]
+            message(f"{joueur['nom']} récupère sa mise (égalité).")
+        else:
+            message(f"{joueur['nom']} a perdu sa mise.")
+
+    nouvelle_manche()
 #-------Fenetre + boutons--------
 
 racine = tk.Tk()
