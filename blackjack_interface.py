@@ -90,6 +90,14 @@ def mise_soumise():
     mains_joueurs()
     print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")    
 
+def mise_soumise():
+    global joueurs, tour_actuel
+    joueur = joueurs[tour_actuel]
+    joueur["mise"] = mise
+    joueur["jetons"] -= mise
+    label_jetons.config(text=f"{joueur['nom']} : {joueur['jetons']} jetons")
+    mains_joueurs()
+
 def mains_joueurs():
     global main_joueur, main_croupier, paquet, label_joueur, label_croupier
  
