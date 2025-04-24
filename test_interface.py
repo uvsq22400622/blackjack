@@ -15,7 +15,7 @@ abandon=False
 mise = 0
 boutons = []
 
-label_choix = None
+#label_choix = None
 bouton_tirer = None
 bouton_rester = None
 bouton_split = None
@@ -167,10 +167,10 @@ def valeur(main:list)->int:
     return(valeur)
 
 def choix():
-    global label_choix, bouton_tirer, bouton_rester, main_joueur, mise_utilisateur, jeton, bouton_doubler, bouton_split,bouton_abandonner
+    global bouton_tirer, bouton_rester, main_joueur, mise_utilisateur, jeton, bouton_doubler, bouton_split, bouton_abandonner #label_choix
 
-    if label_choix:
-        label_choix.grid_forget()
+    #if label_choix:
+    #    label_choix.grid_forget()
     if bouton_tirer and bouton_tirer.winfo_exists(): 
         bouton_tirer.grid_forget()
         bouton_tirer = None
@@ -187,8 +187,8 @@ def choix():
         bouton_abandonner.grid_forget()
         bouton_abandonner = None
 
-    label_choix = tk.Label(cadre_joueurs, text="Voulez-vous tirer ou rester? ")
-    label_choix.grid(row=3, column=0, columnspan= 2)
+    #label_choix = tk.Label(cadre_joueurs, text="Voulez-vous tirer ou rester? ")
+    #label_choix.grid(row=3, column=0, columnspan= 2)
 
     bouton_tirer = tk.Button(cadre_joueur, text="Tirer", command=tirer)
     bouton_tirer.grid(row=4,column=1)
@@ -259,9 +259,9 @@ def blackjack():
 
 def resultat():
     """Renvoie les résultats du tour de jeu"""
-    global jeton, abandon, bouton_nv_manche, label_choix
+    global jeton, abandon, bouton_nv_manche #, label_choix
 
-    label_choix.grid_forget()
+    #label_choix.grid_forget()
 
     if abandon:
         message(f"Vous abandonnez, vous perdez la moitié de votre mise.")

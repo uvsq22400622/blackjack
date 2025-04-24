@@ -83,39 +83,62 @@ def mise_soumise():
     global mise_utilisateur, jeton, bouton_valider , label_mise_acceptée, mise
     joueur = joueurs[tour_actuel]
 
-    if mise <= jeton:
-        joueur["mise"] = mise
-        joueur["jetons"] -= mise
+    if multijoueur == True:
+        if mise <= jeton:
+            joueur["mise"] = mise
+            joueur["jetons"] -= mise
+            label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+            label_mise_acceptée.config(text=f"Mise acceptée : {mise_utilisateur}")
+            label_mise_acceptée.pack()
+            bouton_valider.config(state="disabled")
+            mains_joueurs()
+            print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")  
+        else:
+            message("Vous n'avez pas assez de jetons pour cette mise.")
+            mise = 0
+            label_mise.config(text=f"Mise actuelle : {mise} €")
+    else:
+        mise_utilisateur = mise
+        jeton -= mise_utilisateur
         label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
         label_mise_acceptée.config(text=f"Mise acceptée : {mise_utilisateur}")
         label_mise_acceptée.pack()
         bouton_valider.config(state="disabled")
         mains_joueurs()
         print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")  
-    else:
-        message("Vous n'avez pas assez de jetons pour cette mise.")
-        mise = 0
-        label_mise.config(text=f"Mise actuelle : {mise} €")
-
 
 def mains_joueurs():
     global main_joueur, main_croupier, paquet, label_joueur, label_croupier
-    joueur = joueurs[tour_actuel]
-    main_joueur = joueur["main"]
-    joueur["main"]=carte(paquet,2) #Création de la main initiale du joueur.
-    main_croupier=carte(paquet,1) #Création de la main initiale du croupier.
+    if multijoueur == True:
+        joueur = joueurs[tour_actuel]
+        main_joueur = joueur["main"]
+        joueur["main"]=carte(paquet,2) #Création de la main initiale du joueur.
+        main_croupier=carte(paquet,1) #Création de la main initiale du croupier.
 
-    if valeur(main_joueur)==21:
-        blackjack()
+        if valeur(main_joueur)==21:
+            blackjack()
 
-    label_joueur = tk.Label(racine, text=f"{joueur['nom']} : {joueur['main']} (Valeur: {valeur(joueur['main'])})")
-    label_joueur.pack()
+        label_joueur = tk.Label(racine, text=f"{joueur['nom']} : {joueur['main']} (Valeur: {valeur(joueur['main'])})")
+        label_joueur.pack()
 
-    label_croupier = tk.Label(racine, text=f"Croupier : {main_croupier} (Valeur: {valeur(main_croupier)})")
-    label_croupier.pack()
+        label_croupier = tk.Label(racine, text=f"Croupier : {main_croupier} (Valeur: {valeur(main_croupier)})")
+        label_croupier.pack()
 
-    choix()
+        choix()
+    else: 
+        main_joueur=carte(paquet,2) #Création de la main initiale du joueur.
+        main_croupier=carte(paquet,1) #Création de la main initiale du croupier.
 
+        if valeur(main_joueur)==21:
+            blackjack()
+
+        label_joueur = tk.Label(racine, text=f"Votre main : {main_joueur}, (Valeur: {valeur(main_joueur)})")
+        label_joueur.pack()
+
+        label_croupier = tk.Label(racine, text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+        label_croupier.pack()
+
+        choix()
 
 def valeur(main:list)->int:
     """renvoie la valeur des cartes dans une main"""
@@ -181,7 +204,7 @@ def choix():
 def tirer():
     global main_joueur, game_over, paquet, label_joueur, label_croupier
     """Rajoute une carte au joueur"""
-    if commencer_tour:
+    if multijoueur == True:
         joueur = joueurs[tour_actuel]
         main_joueur = joueur["main"]
         main_joueur.extend(carte(paquet, 1))
@@ -360,10 +383,12 @@ label_mise_acceptée = tk.Label(racine, text="", fg="green")
 
 joueurs = []
 tour_actuel = 0
+multijoueur =False
 
 def initialiser_joueurs(nb_joueurs):
     """Initialise les joueurs avec 100 jetons chacun."""
-    global joueurs, tour_actuel
+    global joueurs, tour_actuel, multijoueur
+    multijoueur = True
     joueurs = [{"nom": f"Joueur {i+1}", "jetons": 100, "main": [], "mise": 0} for i in range(nb_joueurs)]
     tour_actuel = 0
     commencer_tour()
