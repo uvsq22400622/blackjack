@@ -11,6 +11,7 @@ game_over =False
 doubler_mise = False
 abandon = False
 mise = 0
+tour_actuel = 0
 #liste des boutons_mise:
 boutons = []
 label_choix = None
@@ -19,7 +20,6 @@ bouton_rester = None
 bouton_split = None
 bouton_doubler = None
 bouton_abandonner = None
-
 
 def carte(paquet:list, n:int)->list:
     """génère un nombre n de cartes du paquet"""
@@ -33,96 +33,87 @@ def carte(paquet:list, n:int)->list:
 # --------- Déroulement de la partie ---------
  
 def commencer_partie():
-   """permet de jouer une partie en misant, renvoie le nombre de jeton à la fin de la partie"""
-   global label_jetons, label_mise, entry_mise, bouton_valider, label_erreur, label_mise_acceptée, game_over
+    """permet de jouer une partie en misant, renvoie le nombre de jeton à la fin de la partie"""
+    global label_jetons, label_mise, bouton_valider, label_mise_acceptée, game_over, joueurs, tour_actuel
+    
+    if jeton<=0:
+       label_fin_de_jeu=tk.Label(racine, text="Vous n'avez plus de jeton le jeu est terminé", font=("helvetica",14))
+       label_fin_de_jeu.pack()
+       bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
+       bouton_quitter.pack()
 
-   if jeton<=0:
-      label_fin_de_jeu=tk.Label(racine, text="Vous n'avez plus de jeton le jeu est terminé", font=("helvetica",14))
-      label_fin_de_jeu.pack()
-      bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
-      bouton_quitter.pack()
+    else:
+        game_over= False
 
-   else:
-       game_over= False
+        label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+        label_jetons.pack()
 
-       label_jetons = tk.Label(racine, text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
-       label_jetons.pack()
+        label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
+        label_mise.pack()
 
-       label_mise = tk.Label(racine, text = "Combien voulez vous miser ? :")
-       label_mise.pack()
+        valeurs_mise= [1,5,10,25,50,100]
 
-       valeurs_mise= [1,5,10,25,50,100]
-
-       for val in valeurs_mise:
+        for val in valeurs_mise:
            bouton_mise = tk.Button(racine, text=f"Miser {val} €", font=("Arial", 10),command=lambda v=val: ajouter_mise(v))
            bouton_mise.pack()
            boutons.append(bouton_mise)
 
-       bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
-       bouton_valider.pack()
+        bouton_valider = tk.Button(racine, text="Valider la mise", command=valider_mise)
+        bouton_valider.pack()
 
 def ajouter_mise(montant):
     global mise
     mise += montant
     label_mise.config(text=f"Mise actuelle : {mise} €")
-def valider_mise():
-   global boutons, jeton, mise
-   #grise boutons_mise
-   for bouton_mise in boutons:
-       bouton_mise.config(state="disabled")
-   if mise <= jeton:
-       mise_soumise()
-   else:
-       mise = 0
-       label_mise.config(text=f"Mise actuelle : {mise} €")
 
+def valider_mise():
+    global boutons, jeton, mise, label_mise_acceptée
+    if not label_mise_acceptée:
+        label_mise_acceptée = tk.Label(racine, text="", fg="green")
+    joueur = joueurs[tour_actuel]
+    for bouton_mise in boutons:
+       bouton_mise.config(state="disabled")
+    if joueur["mise"] <= joueur["jeton"]:
+        mise_soumise()
+    else:
+        joueur["mise"] = 0
+        label_mise.config(text=f"Mise actuelle : {mise} €")
 
 def mise_soumise():
     global mise_utilisateur, jeton, bouton_valider , label_mise_acceptée, mise
-    
-    mise_utilisateur = mise
-    jeton -= mise_utilisateur
-    label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
-    label_mise_acceptée.config(text=f"Mise acceptée : {mise_utilisateur}")
-    label_mise_acceptée.pack()
-    bouton_valider.config(state="disabled")
-    #fonction pour ditribuer les cartes
-    mains_joueurs()
-    print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")    
-
-def mise_soumise():
-    global joueurs, tour_actuel
     joueur = joueurs[tour_actuel]
-    joueur["mise"] = mise
-    joueur["jetons"] -= mise
-    label_jetons.config(text=f"{joueur['nom']} : {joueur['jetons']} jetons")
-    mains_joueurs()
+
+    if mise <= jeton:
+        joueur["mise"] = mise
+        joueur["jetons"] -= mise
+        label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+        label_mise_acceptée.config(text=f"Mise acceptée : {mise_utilisateur}")
+        label_mise_acceptée.pack()
+        bouton_valider.config(state="disabled")
+        mains_joueurs()
+        print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")  
+    else:
+        message("Vous n'avez pas assez de jetons pour cette mise.")
+        mise = 0
+        label_mise.config(text=f"Mise actuelle : {mise} €")
+
 
 def mains_joueurs():
     global main_joueur, main_croupier, paquet, label_joueur, label_croupier
- 
-    main_joueur=carte(paquet,2) #Création de la main initiale du joueur.
+    joueur = joueurs[tour_actuel]
+    main_joueur = joueur["main"]
+    joueur["main"]=carte(paquet,2) #Création de la main initiale du joueur.
     main_croupier=carte(paquet,1) #Création de la main initiale du croupier.
 
     if valeur(main_joueur)==21:
         blackjack()
 
-    label_joueur = tk.Label(racine, text=f"Votre main : {main_joueur}, (Valeur: {valeur(main_joueur)})")
+    label_joueur = tk.Label(racine, text=f"{joueur['nom']} : {joueur['main']} (Valeur: {valeur(joueur['main'])})")
     label_joueur.pack()
 
-    label_croupier = tk.Label(racine, text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+    label_croupier = tk.Label(racine, text=f"Croupier : {main_croupier} (Valeur: {valeur(main_croupier)})")
     label_croupier.pack()
 
-    choix()
-
-def mains_joueurs():
-    global joueurs, tour_actuel, main_croupier
-    joueur = joueurs[tour_actuel]
-    joueur["main"] = carte(paquet, 2)
-    main_croupier = carte(paquet, 1)
-
-    label_joueur.config(text=f"{joueur['nom']} : {joueur['main']} (Valeur: {valeur(joueur['main'])})")
-    label_croupier.config(text=f"Croupier : {main_croupier} (Valeur: {valeur(main_croupier)})")
     choix()
 
 
@@ -188,9 +179,23 @@ def choix():
         bouton_doubler.pack()    
 
 def tirer():
-    global main_joueur, game_over, paquet, label_joueur
+    global main_joueur, game_over, paquet, label_joueur, label_croupier
     """Rajoute une carte au joueur"""
-    if doubler:
+    if commencer_tour:
+        joueur = joueurs[tour_actuel]
+        main_joueur = joueur["main"]
+        main_joueur.extend(carte(paquet, 1))
+        label_joueur.config(text=f"{joueur['nom']} : {main_joueur} (Valeur:{valeur(main_joueur)})")
+        if valeur(main_joueur)>21:
+            game_over = True
+            message(f"{joueur['nom']}")
+        if len(joueurs)>21:
+            joueur_suivant()
+        elif valeur(main_joueur) <=21:
+            choix()
+        croupier()
+        resultat()
+    if doubler_mise:
         main_joueur.extend(carte(paquet, 1))
         label_joueur.config(text=f"Votre main : {main_joueur} (Valeur:{valeur(main_joueur)})")
         game_over = True
@@ -209,15 +214,16 @@ def tirer():
 
 def rester():
     """Le joueur ne tire pas et passe son tour"""
-    global game_over
+    global game_over, tour_actuel
+    
+    game_over = True
+    if len(joueurs)>1:
+        joueur_suivant()
     if not game_over:
         game_over=True
     croupier()
     resultat()
-
-def rester():
-    global tour_actuel
-    joueur_suivant()
+    
 
 def croupier():
     """Définie le tour de jeu du croupier"""
@@ -243,29 +249,29 @@ def blackjack():
 def resultat():
     """Renvoie les résultats du tour de jeu"""
     global jeton, abandon
+    for joueur in joueurs:
+        if abandon:
+            message(f"{joueur['nom']} abandonne, perd la moitié de sa mise.")
+            jeton += joueur['mise'] // 2
 
-    if abandon:
-        message(f"Vous abandonnez, vous perdez la moitié de votre mise.")
-        jeton+=mise_utilisateur // 2
+        if valeur(joueur['main']) > 21:
+            message(f"{joueur['nom']} a dépassé 21. Perdu.")
+            jeton -= joueur['mise']
 
-    if valeur(main_joueur) > 21:
-        message(f"Dust ! Vous perdez votre mise")
-        jeton-=mise_utilisateur
+        elif valeur(joueur['main']) > valeur(main_croupier):
+            message(f"{joueur['nom']} gagne {joueur['mise']} jetons.")
+            jeton += joueur['mise']
 
-    elif valeur(main_croupier)>21:
-        message(f"Victoire! Vous gagnez {mise_utilisateur} jetons.")
-        jeton+=mise_utilisateur
+        elif valeur(main_croupier)>valeur(main_joueur):
+            message(f"Perdu! Vous perdez {mise_utilisateur} jetons.")
 
-    elif valeur(main_croupier)>valeur(main_joueur):
-        message(f"Perdu! Vous perdez {mise_utilisateur} jetons.")
+        elif valeur(joueur['main']) == valeur(main_croupier):
+            message(f"{joueur['nom']} récupère sa mise (égalité).")
+            jeton += joueur['mise']
 
-    elif valeur(main_joueur)>valeur(main_croupier):
-        message(f"Victoire! Vous gagnez {mise_utilisateur} jetons.")
-        jeton+=mise_utilisateur
-
-    elif valeur(main_joueur)==valeur(main_croupier):
-        message("Egalité! Vous récuperez votre mise")
-        jeton+=mise_utilisateur
+        else:
+            message(f"{joueur['nom']} perd sa mise.")
+            jeton -= joueur['mise']
 
     bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
     bouton_nv_manche.pack()
@@ -301,7 +307,15 @@ def nouvelle_manche():
     for widget in racine.winfo_children(): #supprime tout les widgets
         widget.pack_forget()
 
-    commencer_partie()
+    if len(joueurs) > 1:
+        # Retour au menu si mode multijoueur
+        label_demarrage.pack()
+        bouton_demarrer.pack()
+        bouton_quitter.pack()
+        bouton_multijoueur.pack()
+        joueurs = []  # Réinitialise la liste de joueurs
+    else:
+        afficher_menu_principal()
 
 def abandonner():
     global abandon, game_over
@@ -317,58 +331,13 @@ def doubler():
     global mise_utilisateur, jeton, doubler_mise
     doubler_mise = True
     mise_utilisateur *= 2
-    label_mise.config(text=f"Votre mise est maintenant de {mise_utilisateur}.")
-    label_jetons.config(text=f"Vous avez {jeton-mise_utilisateur} jetons.")
+    label_mise.config(text=f"Votre mise est maintenant de {mise_utilisateur} €.")
+    label_jetons.config(text=f"Vous avez {jeton - mise_utilisateur} jetons.")
+    bouton_doubler.config(state="disabled")  
     tirer()
 
-#------- Multijoueur-------------
 
-# Liste des joueurs et gestion des tours
-joueurs = []
-tour_actuel = 0
 
-def initialiser_joueurs(nb_joueurs):
-    """Initialise les joueurs avec 100 jetons chacun."""
-    global joueurs, tour_actuel
-    joueurs = [{"nom": f"Joueur {i+1}", "jetons": 100, "main": [], "mise": 0} for i in range(nb_joueurs)]
-    tour_actuel = 0
-    commencer_tour()
-
-def commencer_tour():
-    """Démarre le tour du joueur actuel."""
-    global tour_actuel
-    joueur = joueurs[tour_actuel]
-    label_joueur_actuel.config(text=f"{joueur['nom']} (Jetons : {joueur['jetons']})")
-    commencer_partie()
-
-def joueur_suivant():
-    """Passe au tour du joueur suivant ou au croupier si tous les joueurs ont joué."""
-    global tour_actuel, joueurs
-    tour_actuel += 1
-    if tour_actuel < len(joueurs):
-        commencer_tour()
-    else:
-        croupier()
-        afficher_resultats()
-
-def afficher_resultats():
-    """Affiche les résultats de la manche pour tous les joueurs."""
-    for joueur in joueurs:
-        valeur_main = valeur(joueur["main"])
-        valeur_croupier = valeur(main_croupier)
-
-        if valeur_main > 21:
-            message(f"{joueur['nom']} a dépassé 21. Perdu.")
-        elif valeur_croupier > 21 or valeur_main > valeur_croupier:
-            joueur["jetons"] += joueur["mise"] * 2
-            message(f"{joueur['nom']} a gagné {joueur['mise']} jetons.")
-        elif valeur_main == valeur_croupier:
-            joueur["jetons"] += joueur["mise"]
-            message(f"{joueur['nom']} récupère sa mise (égalité).")
-        else:
-            message(f"{joueur['nom']} a perdu sa mise.")
-
-    nouvelle_manche()
 #-------Fenetre + boutons--------
 
 racine = tk.Tk()
@@ -384,37 +353,91 @@ bouton_demarrer.pack()
 bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quit)
 bouton_quitter.pack()
 
+bouton_multijoueur = tk.Button(racine, text="Mode Multijoueur", font = ("helvetica", "30"), width=20, command=lambda: initialiser_joueurs(2))
+bouton_multijoueur.pack()
 
 label_mise_acceptée = tk.Label(racine, text="", fg="green")
 
+joueurs = []
+tour_actuel = 0
+
+def initialiser_joueurs(nb_joueurs):
+    """Initialise les joueurs avec 100 jetons chacun."""
+    global joueurs, tour_actuel
+    joueurs = [{"nom": f"Joueur {i+1}", "jetons": 100, "main": [], "mise": 0} for i in range(nb_joueurs)]
+    tour_actuel = 0
+    commencer_tour()
+
+main_joueur = None
+main_croupier = None
+
+def commencer_tour():
+    """Démarre le tour du joueur actuel."""
+    global tour_actuel, main_joueur, main_croupier, label_joueur, label_croupier  
+    joueur = joueurs[tour_actuel]
+    
+    if not joueur["main"]:
+        joueur["main"] = carte(paquet, 2)
+    if not main_croupier:
+        main_croupier = carte(paquet, 1)  
+
+    # Efface tous les widgets existants avant de recommencer
+    for widget in racine.winfo_children():
+        widget.pack_forget()
+
+    # Affiche les infos du joueur courant
+    label_jetons = tk.Label(racine, text=f"{joueur['nom']} - Jetons: {joueur['jetons']}", font=("Helvetica", 14))
+    label_jetons.pack()
+
+    label_mise = tk.Label(racine, text=f"Mise: {joueur['mise']} €", font=("Helvetica", 14))
+    label_mise.pack()
+
+    label_joueur = tk.Label(racine, text=f"{joueur['nom']} - Main: {joueur['main']} (Valeur: {valeur(joueur['main'])})", font=("Helvetica", 14))
+    label_joueur.pack()
+
+    label_croupier = tk.Label(racine, text=f"Croupier: {main_croupier} (Valeur: {valeur(main_croupier)})", font=("Helvetica", 14))
+    label_croupier.pack()
+    choix() 
+
+def joueur_suivant():
+    """Change de joueur pour le tour suivant."""
+    global tour_actuel, game_over
+    if tour_actuel < len(joueurs) - 1:
+        tour_actuel += 1
+    else:
+        # Une fois tous les joueurs joués, c'est au tour du croupier
+        croupier()
+        game_over = True
+    commencer_tour()  # Met à jour l'interface avec le joueur suivant
+
+label_resultat = tk.Label(racine, text="", font=("Helvetica", 14))
+label_resultat.pack()
 
 racine.mainloop()
 
-bouton_multijoueur = tk.Button(racine, text="Mode Multijoueur (2 joueurs)", command=lambda: initialiser_joueurs(2))
-bouton_multijoueur.pack()
+# Création des labels pour afficher les mains*
 
 
-
-# Création des labels pour afficher les mains
 label_main_joueur = tk.Label(racine, text="Votre main : ", font=("Helvetica", 14))
-label_main_joueur.grid(row=1, column=0, sticky="w")
+label_main_joueur.pack()
 
 label_main_croupier = tk.Label(racine, text="Main du croupier : ", font=("Helvetica", 14))
-label_main_croupier.grid(row=2, column=0, sticky="w")
+label_main_croupier.pack()
 
 label_resultat = tk.Label(racine, text="", font=("Helvetica", 14))
-label_resultat.grid(row=3, column=0, sticky="w")
+label_resultat.pack()
 
+def afficher_menu_principal():
+    global label_demarrage, bouton_demarrer, bouton_quitter, bouton_multijoueur
+    # Réinstancie les éléments du menu
+    label_demarrage = tk.Label(racine, text="Blackjack !", padx=20, pady=20, font=("helvetica", 30))
+    label_demarrage.pack()
 
+    bouton_demarrer = tk.Button(racine, text="Play", font=("helvetica", 30), width=20, command=play)
+    bouton_demarrer.pack()
 
- 
- # à faire qui ne compte pas dans la note
- #interface oppérationnel /
- #ajout des nouvelles fonctions + bouttons
- 
- #----------Nouvelles fonctions, autres pour la note --------
- # multijoueur 
- # gsetion des as, positionnement
- # graphisme avancée, image ( perfectionner l'interface graphique)
- #fonctions : les cotes de la main = strategie qui informe le joueur sur comment jouer la partie
- #           l'assurance : mise secondaire
+    bouton_quitter = tk.Button(racine, text="Quit", font=("helvetica", 30), width=20, command=quit)
+    bouton_quitter.pack()
+
+    bouton_multijoueur = tk.Button(racine, text="Mode Multijoueur", font=("helvetica", 30), width=20, command=lambda: initialiser_joueurs(2))
+    bouton_multijoueur.pack()

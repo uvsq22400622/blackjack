@@ -297,7 +297,7 @@ def resultat():
 def message(message):
     """Affiche le résultat de la manche et désactive les boutons d'action."""
     global label_resultat
-    label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
+    label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"),fg="white", bg="gray22")
     label_resultat.grid(row=0,column=0,columnspan=4)
 
     if bouton_tirer and bouton_tirer.winfo_exists():
