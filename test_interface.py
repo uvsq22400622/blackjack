@@ -5,6 +5,7 @@ import random as rd
 rangs = {"As": 11, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6,
          "7": 7, "8": 8, "9": 9, "10": 10, "Valet": 10, "Dame": 10, "Roi": 10}
 couleurs = ['♠', '♥', '♦', '♣']
+couleurs_cartes = {"♠": "black", "♣": "black", "♥": "red", "♦": "red"}
 paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
 mise_utilisateur = 0
 jeton = 100
@@ -80,11 +81,12 @@ def valider_mise():
    #grise boutons_mise
    for bouton_mise in boutons:
        bouton_mise.config(state="disabled")
-   if mise <= jeton:
+   if mise >0 and mise <= jeton :
        mise_soumise()
    else:
        mise = 0
        label_mise.config(text=f"Mise actuelle : {mise} €")
+       quit()
 
 def mise_soumise():
     global mise_utilisateur, jeton, bouton_valider , label_mise, mise
@@ -126,12 +128,11 @@ def mains_joueurs():
     choix()
 
 def affichage_main_joueur():
-    global cadre_joueur
+    global cadre_joueur, couleurs_cartes
 
     # supression => pas empiler
     for widget in cadre_joueur.winfo_children():
         widget.destroy()
-    couleurs_cartes = {"♠": "black", "♣": "black", "♥": "red", "♦": "red"}
 
     # titre des cartes
     titre_label = tk.Label(cadre_joueur, text=f"Votre main = ({valeur(main_joueur)})",
@@ -187,7 +188,7 @@ def choix():
         bouton_abandonner = None
 
     label_choix = tk.Label(cadre_joueurs, text="Voulez-vous tirer ou rester? ")
-    label_choix.grid(row=3, column=0)
+    label_choix.grid(row=3, column=0, columnspan= 2)
 
     bouton_tirer = tk.Button(cadre_joueur, text="Tirer", command=tirer)
     bouton_tirer.grid(row=4,column=1)
@@ -204,7 +205,7 @@ def choix():
 
     if mise_utilisateur * 2 <= jeton:
         bouton_doubler = tk.Button(cadre_joueur, text="Doubler votre mise", command=doubler)
-        bouton_doubler.grid(row=6, column=0) 
+        bouton_doubler.grid(row=5, column=1) 
 
 def tirer():
     global main_joueur, game_over, paquet, doubler_mise
@@ -253,12 +254,14 @@ def blackjack():
     bouton_tirer.grid_forget()
     bouton_rester.grid_forget()
 
-    bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
+    bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche, fg="white", bg="gray22")
     bouton_nv_manche.grid(row=8,column=0,columnspan=3)
 
 def resultat():
     """Renvoie les résultats du tour de jeu"""
-    global jeton, abandon, bouton_nv_manche
+    global jeton, abandon, bouton_nv_manche, label_choix
+
+    label_choix.grid_forget()
 
     if abandon:
         message(f"Vous abandonnez, vous perdez la moitié de votre mise.")
@@ -282,13 +285,14 @@ def resultat():
     elif valeur(main_joueur)==valeur(main_croupier):
         message("Egalité! Vous récuperez votre mise")
         jeton+=mise_utilisateur
-#on force l'affichage
-    if not bouton_nv_manche:
-        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche)
+#on force l'affichage du bouton
+    if bouton_nv_manche is None:
+        bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche, fg="white", bg="gray22")
         bouton_nv_manche.grid(row=8,column=0,columnspan=3)
+        print("Bouton Nouvelle Manche créé et affiché.")
     else:
         bouton_nv_manche.grid(row=8, column=0, columnspan=3)
-
+        print("Bouton Nouvelle Manche déjà existant, réaffiché.")
 
 def message(message):
     """Affiche le résultat de la manche et désactive les boutons d'action."""
@@ -296,15 +300,15 @@ def message(message):
     label_resultat = tk.Label(racine, text=message, font=("helvetica", "16"))
     label_resultat.grid(row=0,column=0,columnspan=4)
 
-    if bouton_tirer:
+    if bouton_tirer and bouton_tirer.winfo_exists():
         bouton_tirer.config(state="disabled")
-    if bouton_rester:
+    if bouton_rester and bouton_rester.winfo_exists():
         bouton_rester.config(state="disabled")
-    if bouton_split:
+    if bouton_split and bouton_split.winfo_exists():
         bouton_split.config(state="disabled")
-    if bouton_doubler:
+    if bouton_doubler and bouton_doubler.winfo_exists():
         bouton_doubler.config(state="disabled")
-    if bouton_abandonner:
+    if bouton_abandonner and bouton_abandonner.winfo_exists():
         bouton_abandonner.config(state="disabled")
 
 def nouvelle_manche():
