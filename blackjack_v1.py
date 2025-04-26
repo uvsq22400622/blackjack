@@ -14,7 +14,7 @@ doubler_mise = False
 abandon=False
 mise = 0
 boutons = []
-
+#tour_actuel = 0
 #label_choix = None
 bouton_tirer = None
 bouton_rester = None
@@ -199,9 +199,9 @@ def choix():
     bouton_abandonner = tk.Button(cadre_joueur, text="Abandonner", command=abandonner)
     bouton_abandonner.grid(row=5,column=0)
 
-    if len(main_joueur) == 2 and main_joueur[0].split(" de ")[0] == main_joueur[1].split(" de ")[0]:
-        bouton_split = tk.Button(cadre_joueur, text="Split", command=partie_split)
-        bouton_split.grid(row=5,column=1)
+    #if len(main_joueur) == 2 and main_joueur[0].split(" de ")[0] == main_joueur[1].split(" de ")[0]:
+    #    bouton_split = tk.Button(cadre_joueur, text="Split", command=partie_split)
+    #    bouton_split.grid(row=5,column=1)
 
     if mise_utilisateur * 2 <= jeton:
         bouton_doubler = tk.Button(cadre_joueur, text="Doubler votre mise", command=doubler)
@@ -218,15 +218,17 @@ def tirer():
         croupier()
         resultat()
 
-    elif not game_over and not valeur(main_joueur)>21:
+    elif not game_over:
         main_joueur.extend(carte(paquet, 1))
         affichage_main_joueur()
-        choix()
-
-    elif valeur(main_joueur)>21:
-        game_over= True
-        croupier()
-        resultat()
+        if valeur(main_joueur) > 21:
+            game_over= True
+            croupier()
+            resultat()
+        elif valeur(main_joueur)==21:
+            blackjack()
+        else:
+            choix()
 
 def rester():
     """Le joueur ne tire pas et passe son tour"""
@@ -253,9 +255,9 @@ def blackjack():
 
     bouton_tirer.grid_forget()
     bouton_rester.grid_forget()
-
+    print("blackjack !")
     bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche, fg="white", bg="gray22")
-    bouton_nv_manche.grid(row=8,column=0,columnspan=3)
+    bouton_nv_manche.grid(row=1,column=0,columnspan=3)
 
 def resultat():
     """Renvoie les résultats du tour de jeu"""
@@ -285,6 +287,8 @@ def resultat():
     elif valeur(main_joueur)==valeur(main_croupier):
         message("Egalité! Vous récuperez votre mise")
         jeton+=mise_utilisateur
+    elif valeur(main_joueur)==21:
+        blackjack()
 #on force l'affichage du bouton
     if bouton_nv_manche is None:
         bouton_nv_manche = tk.Button(racine, text="Nouvelle Manche", command=nouvelle_manche, fg="white", bg="gray22")
