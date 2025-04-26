@@ -22,6 +22,7 @@ bouton_split = None
 bouton_doubler = None
 bouton_abandonner = None
 bouton_nv_manche = None
+bouton_nv_partie = None
 
 def carte(paquet: list, n: int) -> list:
     main = []
@@ -41,14 +42,25 @@ def play():
     label_decoration.grid_forget()
     commencer_partie()
 
+def nouvelle_partie():
+    global mise,jeton, bouton_quit, label_fin_de_jeu, bouton_nv_partie
+    jeton = 100
+    mise = 0
+    bouton_quit.grid_forget()
+    label_fin_de_jeu.grid_forget()
+    bouton_nv_partie.grid_forget()
+    commencer_partie()
+
 def commencer_partie():
-    global label_jetons, label_mise, bouton_valider
+    global label_jetons, label_mise, bouton_valider, label_fin_de_jeu, bouton_quit, bouton_nv_partie
 
     if jeton <= 0:
         label_fin_de_jeu = tk.Label(racine, text="Vous n'avez plus de jeton, le jeu est terminé", font=("helvetica", 14))
         label_fin_de_jeu.grid(row=1, column=0, columnspan=2, pady=20)
         bouton_quit = tk.Button(racine, text="Quit", font=("Arial", 20), width=20, command=quit)
         bouton_quit.grid(row=2, column=0, columnspan=2, pady=10)
+        bouton_nv_partie = tk.Button(racine, text="Nouvelle Partie", command=nouvelle_partie, fg="white", bg="gray22")
+        bouton_nv_partie.grid(row=3,column=0,columnspan=3)
         return
 
     # Cadre principal de la partie
