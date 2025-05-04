@@ -40,7 +40,7 @@ def commencer_partie():
    if jeton<=0:
       label_fin_de_jeu=tk.Label(racine, text="Vous n'avez plus de jeton le jeu est terminé", font=("helvetica",14))
       label_fin_de_jeu.pack()
-      bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quitter)
+      bouton_quitter= tk.Button(racine, text="Quit", font = ("helvetica", "30"), width=20, command=quitter_le_jeu)
       bouton_quitter.pack()
 
    else:
@@ -151,7 +151,7 @@ def play():
     bouton_demarrer.destroy()
     commencer_partie()
 
-def quit():
+def quitter_le_jeu():
     """Ferme la fenêtre principale."""
     racine.destroy()
 
