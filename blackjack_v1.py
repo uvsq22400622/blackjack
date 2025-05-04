@@ -14,7 +14,7 @@ jeton = 100
 game_over = False
 doubler_mise = False
 abandon = False
-split = False
+variable_splitter = False
 mise = 0
 boutons = []
 #tour_actuel = 0
@@ -226,7 +226,7 @@ def choix():
             bouton_splitter.grid(row=6, column=0, columnspan= 2)
 
 def tirer():
-    global main_joueur, game_over, paquet, doubler_mise, label_main_joueur_1, label_main_joueur_2, split, main_actuelle, main_joueur_1, main_joueur_2
+    global main_joueur, game_over, paquet, doubler_mise, label_main_joueur_1, label_main_joueur_2, variable_splitter, main_actuelle, main_joueur_1, main_joueur_2
     """Rajoute une carte au joueur"""
     if doubler_mise:
         main_joueur.extend(carte(paquet, 1))
@@ -235,7 +235,7 @@ def tirer():
         game_over = True
         croupier()
         resultat()
-    elif split:
+    elif variable_splitter:
         if main_actuelle == 1:
             main_joueur_1.extend(carte(paquet,1))
             label_main_joueur_1.config(text=f"Votre première main : {main_joueur_1} (Valeur: {valeur(main_joueur_1)})")
@@ -268,8 +268,8 @@ def tirer():
 
 def rester():
     """Le joueur ne tire pas et passe son tour"""
-    global game_over, split, main_actuelle
-    if split:
+    global game_over, variable_splitter, main_actuelle
+    if variable_splitter:
         if main_actuelle == 1:
             main_actuelle = 2
             jouer_main_split()
@@ -367,11 +367,11 @@ def message(message):
 
 def nouvelle_manche():
     """Réinitialise le jeu, démarre une nouvelle partie."""
-    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise, abandon, split, main_actuelle
+    global main_joueur, main_croupier, game_over, mise_utilisateur, doubler_mise, paquet, mise, abandon, variable_splitter, main_actuelle
 
     game_over = False
     abandon = False
-    split = False
+    variable_splitter = False
 
     main_joueur=[]
     main_croupier=[]
@@ -408,9 +408,9 @@ def doubler():
 #---------Splitter-------------
 
 def splitter():
-    global main_joueur, main_joueur_1, main_joueur_2, split, main_actuelle, jeton, mise_utilisateur
+    global main_joueur, main_joueur_1, main_joueur_2, variable_splitter, main_actuelle, jeton, mise_utilisateur
 
-    split = True
+    variable_splitter = True
     main_actuelle = 1
 
     main_joueur_1 = [main_joueur[0]]
