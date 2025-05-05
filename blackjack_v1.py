@@ -84,7 +84,7 @@ def commencer_partie():
     cadre_mise = tk.Frame(racine, bg="gray22", bd=2, padx=10, pady=10)
     cadre_mise.grid(row=1, column=1, columnspan=2, pady=(20, 10), sticky="n")
 
-    label_jetons = tk.Label(cadre_mise, text=f"🪙 {jeton} jetons", font=("helvetica", 14), fg="white", bg="gray22")
+    label_jetons = tk.Label(cadre_mise, text=f" {jeton} 🪙", font=("helvetica", 14), fg="white", bg="gray22")
     label_jetons.grid(row=0, column=0, columnspan=3, pady=5)
 
     label_mise = tk.Label(cadre_mise, text="Combien voulez-vous miser ?", fg="white", bg="gray22")
@@ -92,7 +92,7 @@ def commencer_partie():
 
     valeurs_mise = [1, 5, 10, 25, 50, 100]
     for i, val in enumerate(valeurs_mise):
-        bouton_mise = tk.Button(cadre_mise, text=f"Miser {val} €", font=("Arial", 10), width=12,
+        bouton_mise = tk.Button(cadre_mise, text=f"Miser {val} 🪙", font=("Arial", 10), width=12,
                                 command=lambda v=val: ajouter_mise(v))
         bouton_mise.grid(row=2 + i // 2, column=i % 2, padx=5, pady=5)
         boutons.append(bouton_mise)
@@ -104,7 +104,7 @@ def ajouter_mise(montant):
     """Ajoute un montant à la mise"""
     global mise
     mise += montant
-    label_mise.config(text=f"Mise actuelle : {mise} €")
+    label_mise.config(text=f"Mise actuelle : {mise} 🪙")
 
 def valider_mise():
    """Conditions pour valider la mise """
@@ -115,7 +115,7 @@ def valider_mise():
        mise_soumise()
    else:
        mise = 0
-       label_mise.config(text=f"Mise actuelle : {mise} €")
+       label_mise.config(text=f"Mise actuelle : {mise} 🪙")
        quit()
 
 def mise_soumise():
@@ -123,7 +123,7 @@ def mise_soumise():
     global mise_utilisateur, jeton, bouton_valider , label_mise, mise
     mise_utilisateur = mise
     jeton -= mise_utilisateur
-    label_jetons.config(text=f"🪙 {jeton} jetons", font=("helvetica",14))
+    label_jetons.config(text=f" {jeton} 🪙", font=("helvetica",14))
     label_mise.config(text=f"Mise acceptée : {mise_utilisateur}")
     bouton_valider.config(state="disabled")
     
@@ -131,7 +131,7 @@ def mise_soumise():
 
 def mains_joueurs():
     """Distribue les cartes"""
-    global main_joueur, main_croupier, paquet, label_croupier, cadre_joueurs, cadre_joueur, cadre_resultat
+    global main_joueur, main_croupier, paquet, cadre_joueurs, cadre_joueur, cadre_resultat, cadre_croupier, cadre_split
  
     main_joueur=carte(paquet,2) 
     main_croupier=carte(paquet,1) 
@@ -147,40 +147,49 @@ def mains_joueurs():
 
     cadre_croupier = tk.Frame(cadre_joueurs,bg="gray22", bd=2, padx=10, pady=10)
     cadre_croupier.grid(row=1, column=0, columnspan=2)
-    
-    label_croupier = tk.Label(cadre_croupier, text=f"Main du croupier : {main_croupier} = ({valeur(main_croupier)})",bg="gray22",
-                              fg="white",font=("Arial", 10))
-    label_croupier.grid(row=2, column=0, columnspan=2)
-
+ 
     cadre_joueur = tk.Frame(cadre_joueurs, bg="gray22", bd=2, padx=10, pady=10)
     cadre_joueur.grid(row=2,column=0,columnspan=2)
     
-    affichage_main_joueur()
+    cadre_split = tk.Frame(racine, bg="gray22",bd=2, padx=10, pady=10)
+    cadre_split.grid(row=2, column=0, columnspan=2, pady=(20, 10), sticky="s")
+
+    affichage_main_joueur(cadre_joueur, main_joueur)
+    affichage_main_joueur(cadre_croupier, main_croupier)
 
     choix()
-    
-def affichage_main_joueur():
+
+def affichage_main_joueur(cadre, main):
     """Affichage stylysé des cartes"""
-    global cadre_joueur, couleurs_cartes
+    global cadre_joueur, couleurs_cartes, titre_label, label_croupier
 
-    for widget in cadre_joueur.winfo_children():
-        widget.destroy()
+    for widget in cadre.winfo_children():
+        widget.grid_forget()
+    if cadre == cadre_croupier:
+        titre_label = tk.Label(cadre, text=f"Main Croupier : {valeur(main)}",bg="gray22", fg="white", font=("Arial", 10))
+        titre_label.grid(row=0, column=0, columnspan=len(main), pady=(0, 10))
+    elif cadre == cadre_joueur:
+        titre_label = tk.Label(cadre, text=f"Votre Main : {valeur(main)}",bg="gray22", fg="white", font=("Arial", 10))
+        titre_label.grid(row=0, column=0, columnspan=len(main), pady=(0, 10))
+    elif main == main_joueur_1:
+        titre_label = tk.Label(cadre, text=f"Première Main : {valeur(main)}",bg="gray22", fg="white", font=("Arial", 10))
+        titre_label.grid(row=0, column=0, columnspan=len(main), pady=(0, 10))
+    elif main == main_joueur_2:
+        titre_label = tk.Label(cadre, text=f"Deuxième Main : {valeur(main)}",bg="gray22", fg="white", font=("Arial", 10))
+        titre_label.grid(row=1, column=0, columnspan=len(main), pady=(0, 10))
 
-    titre_label = tk.Label(cadre_joueur, text=f"Votre main = ({valeur(main_joueur)})",
-                           bg="gray22", fg="white", font=("Arial", 10))
-    titre_label.grid(row=0, column=0, columnspan=len(main_joueur), pady=(0, 10))
-
-    for i, carte_txt in enumerate(main_joueur):
+    for i, carte_txt in enumerate(main):
         rang, couleur = carte_txt.split(" de ")
         symbole = couleur.strip()[0]  # ♠ ♥ ♦ ♣
         couleur_texte = couleurs_cartes.get(symbole, "black")
 
-        carte_label = tk.Label(cadre_joueur, text=f"{rang}\n{symbole}",
+        carte_label = tk.Label(cadre, text=f"{rang}\n{symbole}",
                                bg="ivory", fg=couleur_texte,
                                font=("Courier", 10, "bold"),
                                relief="raised", bd=3,
                                width=6, height=3)
-        carte_label.grid(row=1, column=i, padx=5)
+        carte_label.grid(row=3, column=i, padx=5)
+
 
 def valeur(main:list)->int:
     """Renvoie la valeur des cartes dans une main"""
@@ -238,7 +247,7 @@ def tirer():
     global main_joueur, game_over, paquet, doubler_mise, label_main_joueur_1, label_main_joueur_2, variable_splitter, main_actuelle, main_joueur_1, main_joueur_2
     if doubler_mise:
         main_joueur.extend(carte(paquet, 1))
-        affichage_main_joueur()
+        affichage_main_joueur(cadre_joueur, main_joueur)
         doubler_mise = False
         game_over = True
         croupier()
@@ -246,23 +255,26 @@ def tirer():
     elif variable_splitter:
         if main_actuelle == 1:
             main_joueur_1.extend(carte(paquet,1))
-            label_main_joueur_1.config(text=f"Votre première main : {main_joueur_1} (Valeur: {valeur(main_joueur_1)})")
-            if valeur(main_joueur_1)>=21:
+            affichage_main_joueur(cadre_split, main_joueur_1)
+            label_main_joueur_1.config(text=f"Votre première main : {valeur(main_joueur_1)}")
+            if valeur(main_joueur_1) >=21 :
                 main_actuelle = 2
             jouer_main_split()
         elif main_actuelle == 2:
             main_joueur_2.extend(carte(paquet,1))
-            label_main_joueur_2.config(text=f"Votre seconde main : {main_joueur_2} (Valeur: {valeur(main_joueur_2)})")
+            affichage_main_joueur(cadre_split, main_joueur_2)
+            label_main_joueur_2.config(text=f"Votre seconde main :  {valeur(main_joueur_2)}")
             if valeur(main_joueur_2)>=21:
                 game_over = True
                 croupier()
                 resultat_split()
             else:
                 jouer_main_split()
+        return
 
     elif not game_over:
         main_joueur.extend(carte(paquet, 1))
-        affichage_main_joueur()
+        affichage_main_joueur(cadre_joueur, main_joueur)
         if valeur(main_joueur) > 21:
             game_over= True
             croupier()
@@ -293,17 +305,17 @@ def rester():
 
 def croupier():
     """Définie le tour de jeu du croupier"""
-    global game_over
+    global game_over, cadre_croupier
     while valeur(main_croupier) < 17:
         main_croupier.extend(carte(paquet, 1))
-        label_croupier.config(text=f"Main du croupier : {main_croupier}, (Valeur : {valeur(main_croupier)})")
+    affichage_main_joueur(cadre_croupier, main_croupier)
     game_over = True
 
 def blackjack():
     """Execute si blackjack"""
     global jeton, mise_utilisateur, bouton_nv_manche
 
-    message(f"Blackjack ! Vous gagnez {int(mise_utilisateur * 2.5)} jetons.")
+    message(f"Blackjack ! Vous gagnez {int(mise_utilisateur * 2.5)} 🪙.")
     jeton+=int(mise_utilisateur * 2.5)
 
     bouton_tirer.grid_forget()
@@ -324,15 +336,15 @@ def resultat():
         jeton-=mise_utilisateur
 
     elif valeur(main_croupier)>21:
-        message(f"Victoire! Vous gagnez {mise_utilisateur} jetons.")
+        message(f"Victoire! Vous gagnez {mise_utilisateur} 🪙.")
         jeton+=mise_utilisateur*2
 
     elif valeur(main_croupier)>valeur(main_joueur):
-        message(f"Perdu! Vous perdez {mise_utilisateur} jetons.")
+        message(f"Perdu! Vous perdez {mise_utilisateur} 🪙.")
         jeton-=mise_utilisateur
 
     elif valeur(main_joueur)>valeur(main_croupier):
-        message(f"Victoire! Vous gagnez {mise_utilisateur} jetons.")
+        message(f"Victoire! Vous gagnez {mise_utilisateur} 🪙.")
         jeton+=mise_utilisateur*2
 
     elif valeur(main_joueur)==valeur(main_croupier):
@@ -384,7 +396,7 @@ def nouvelle_manche():
     main_actuelle = 0
 
     doubler_mise = False
-    paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
+    paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs_cartes]
     mise = 0
     for widget in racine.winfo_children(): #supprime tout les widgets
         widget.grid_forget()
@@ -437,16 +449,15 @@ def splitter():
 def jouer_main_split():
     """Jouer les deux mains"""
     global main_actuelle, main_joueur_1, main_joueur_2, label_main_joueur_1, label_main_joueur_2, cadre_joueur
-
-    cadre_split = tk.Frame(racine, bg="gray22",bd=2, padx=10, pady=10)
-    cadre_split.grid(row=2, column=0, columnspan=2, pady=(20, 10), sticky="s")
     
     if main_actuelle == 1:
-        label_main_joueur_1 = tk.Label(cadre_split, text=f"Votre première main : {main_joueur_1}, (Valeur: {valeur(main_joueur_1)})",bg="gray22",fg="white",font=("Arial", 10))
+        label_main_joueur_1 = tk.Label(cadre_split, text=f"Votre première main : ",bg="gray22",fg="white",font=("Arial", 10))
         label_main_joueur_1.grid(row=0, column=0)
+        affichage_main_joueur(cadre_split, main_joueur_1)
     elif main_actuelle == 2:
-        label_main_joueur_2 = tk.Label(cadre_split, text=f"Votre seconde main : {main_joueur_2}, (Valeur: {valeur(main_joueur_2)})",bg="gray22",fg="white",font=("Arial", 10))
+        label_main_joueur_2 = tk.Label(cadre_split, text=f"Votre seconde main : ",bg="gray22",fg="white",font=("Arial", 10))
         label_main_joueur_2.grid(row=0, column=1)
+        affichage_main_joueur(cadre_split, main_joueur_2)
     
     choix()
 
