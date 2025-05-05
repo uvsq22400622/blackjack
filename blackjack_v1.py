@@ -8,9 +8,9 @@ import random as rd
 
 rangs = {"As": 11, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6,
          "7": 7, "8": 8, "9": 9, "10": 10, "Valet": 10, "Dame": 10, "Roi": 10}
-couleurs = ['♠', '♥', '♦', '♣']
+#couleurs = ['♠', '♥', '♦', '♣']
 couleurs_cartes = {"♠": "black", "♣": "black", "♥": "red", "♦": "red"}
-paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs]
+paquet = [f"{rang} de {couleur}" for rang in rangs for couleur in couleurs_cartes]
 
 mise_utilisateur = 0
 jeton = 100
@@ -18,6 +18,7 @@ mise = 0
 boutons = []
 
 #tour_actuel = 0
+#joueurs =[]
 
 game_over = False
 doubler_mise = False
@@ -83,7 +84,7 @@ def commencer_partie():
     cadre_mise = tk.Frame(racine, bg="gray22", bd=2, padx=10, pady=10)
     cadre_mise.grid(row=1, column=1, columnspan=2, pady=(20, 10), sticky="n")
 
-    label_jetons = tk.Label(cadre_mise, text=f"Vous avez {jeton} jetons.", font=("helvetica", 14), fg="white", bg="gray22")
+    label_jetons = tk.Label(cadre_mise, text=f"🪙 {jeton} jetons", font=("helvetica", 14), fg="white", bg="gray22")
     label_jetons.grid(row=0, column=0, columnspan=3, pady=5)
 
     label_mise = tk.Label(cadre_mise, text="Combien voulez-vous miser ?", fg="white", bg="gray22")
@@ -122,16 +123,15 @@ def mise_soumise():
     global mise_utilisateur, jeton, bouton_valider , label_mise, mise
     mise_utilisateur = mise
     jeton -= mise_utilisateur
-    label_jetons.config(text=f"Vous avez {jeton} jetons.", font=("helvetica",14))
+    label_jetons.config(text=f"🪙 {jeton} jetons", font=("helvetica",14))
     label_mise.config(text=f"Mise acceptée : {mise_utilisateur}")
     bouton_valider.config(state="disabled")
     
     mains_joueurs()
-    #print(f"Mise acceptée : {mise_utilisateur} Jetons : {jeton}")   
 
 def mains_joueurs():
     """Distribue les cartes"""
-    global main_joueur, main_croupier, paquet, label_joueur, label_croupier, cadre_joueurs, cadre_joueur, cadre_resultat
+    global main_joueur, main_croupier, paquet, label_croupier, cadre_joueurs, cadre_joueur, cadre_resultat
  
     main_joueur=carte(paquet,2) 
     main_croupier=carte(paquet,1) 
@@ -158,7 +158,7 @@ def mains_joueurs():
     affichage_main_joueur()
 
     choix()
-
+    
 def affichage_main_joueur():
     """Affichage stylysé des cartes"""
     global cadre_joueur, couleurs_cartes
@@ -507,10 +507,10 @@ racine.grid_columnconfigure(1, weight=1)
 frame_boutons = tk.Frame(racine, bg="aquamarine4")
 frame_boutons.grid(row=2, column=0, columnspan=2)
 
-bouton_demarrer = tk.Button(frame_boutons, text="Play", font=("Arial", 20, "bold"), width=20, fg="white", bg="gray22", command=play)
+bouton_demarrer = tk.Button(frame_boutons, text="Jouer", font=("Arial", 20, "bold"), width=20, fg="white", bg="gray22", command=play)
 bouton_demarrer.grid(row=0, column=0, padx=10, pady=5)
 
-bouton_quitter = tk.Button(frame_boutons, text="Quit", font=("Arial", 20, "bold"), width=20, fg="white", bg="gray22", command=quit)
+bouton_quitter = tk.Button(frame_boutons, text="Quitter", font=("Arial", 20, "bold"), width=20, fg="white", bg="gray22", command=quitter)
 bouton_quitter.grid(row=1, column=0, padx=10, pady=5)
 
 
