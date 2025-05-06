@@ -178,8 +178,8 @@ def affichage_main_joueur(cadre, main):
         titre_label = tk.Label(cadre, text=f"Deuxième Main : {valeur(main)}",bg="gray22", fg="white", font=("Arial", 10))
         titre_label.grid(row=1, column=0, columnspan=len(main), pady=(0, 10))
 
-    for i, carte_txt in enumerate(main):
-        rang, couleur = carte_txt.split(" de ")
+    for i, carte in enumerate(main):
+        rang, couleur = carte.split(" de ")
         symbole = couleur.strip()[0]  # ♠ ♥ ♦ ♣
         couleur_texte = couleurs_cartes.get(symbole, "black")
 
